@@ -1,6 +1,6 @@
 # CARIOX — Brazilian Martial Arts
 
-A responsive Next.js / React / TypeScript academy website built directly in this repository. Uses the five supplied CARIOX images, charcoal, ivory, and gold branding, cursor-responsive 3D photographic tilt, layered lighting, raised interactive buttons, a CSS belt composition, reduced-motion support, an interactive gallery, expandable training interests, sample schedule filters, a booking dialog, and a scripted receptionist.
+A responsive Next.js / React / TypeScript academy website built directly in this repository. Uses the five supplied CARIOX images, charcoal, ivory, and gold branding, a brand-first full-bleed hero, competitor-informed conversion path (how-to-begin, programs, sample schedule, booking demo, honest FAQ/trust), cursor-responsive 3D photographic tilt, layered lighting, raised interactive buttons, a CSS belt composition, reduced-motion support, an interactive gallery, expandable training interests, sample schedule filters, a booking dialog with step progress, and a scripted receptionist.
 
 ## Commands
 
