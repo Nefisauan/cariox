@@ -30,7 +30,35 @@ const { default: FirstVisit } = await import('../components/FirstVisit');
 const { default: ContactForm } = await import('../components/ContactForm');
 const { default: Receptionist } = await import('../components/Receptionist');
 const { default: InstructorSection } = await import('../components/content/InstructorSection');
+const { default: ClassSchedule } = await import('../components/content/ClassSchedule');
 afterEach(() => { cleanup(); document.body.style.overflow = ''; });
+
+test('the published schedule switches days and filters without losing the Wednesday Gi exceptions', () => {
+  const view = render(<ClassSchedule />);
+  assert.equal(view.container.querySelectorAll('.class-row').length,43);
+  assert.equal(view.getByRole('region',{name:'Monday'}).querySelectorAll('.class-row').length,9);
+  fireEvent.click(view.getByRole('button',{name:'Wednesday'}));
+  fireEvent.change(view.getByRole('combobox',{name:'Filter by program'}),{target:{value:'Gi'}});
+  let panel=view.getByRole('region',{name:'Wednesday'});
+  assert.equal(panel.querySelectorAll('.class-row').length,2);
+  assert.match(panel.textContent!,/Women's Jiu-Jitsu/);assert.match(panel.textContent!,/Kids' Jiu-Jitsu/);
+  fireEvent.change(view.getByRole('combobox',{name:'Filter by program'}),{target:{value:'No-Gi'}});
+  assert.equal(panel.querySelectorAll('.class-row').length,3);
+  fireEvent.click(view.getByRole('button',{name:'Friday'}));
+  panel=view.getByRole('region',{name:'Friday'});
+  assert.equal(panel.querySelectorAll('.class-row').length,6);
+  assert.match(panel.textContent!,/Women's Jiu-Jitsu/);assert.match(panel.textContent!,/Kids' Jiu-Jitsu/);
+  fireEvent.click(view.getByRole('button',{name:'Saturday'}));
+  assert.equal(view.getByRole('region',{name:'Saturday'}).querySelectorAll('.class-row').length,2);
+  fireEvent.change(view.getByRole('combobox',{name:'Filter by program'}),{target:{value:'Muay Thai'}});
+  assert.match(view.getByRole('region',{name:'Saturday'}).textContent!,/10:00AMMuay Thai Sparring/);
+  fireEvent.click(view.getByRole('button',{name:'Sunday'}));
+  assert.match(view.getByRole('region',{name:'Sunday'}).textContent!,/No Muay Thai classes are listed/);
+  fireEvent.click(view.getByRole('button',{name:'View Monday’s classes'}));
+  assert.equal((view.getByRole('combobox') as HTMLSelectElement).value,'All programs');
+  assert.equal(view.getByRole('region',{name:'Monday'}).querySelectorAll('.class-row').length,9);
+  assert.equal(view.getByRole('link',{name:/Ask about Kids' Jiu-Jitsu, Gi, Monday/}).getAttribute('href'),'#contact');
+});
 
 test('instructor portrait and all supplied competition results render as accessible text without medal emojis', () => {
   const view = render(<InstructorSection />);

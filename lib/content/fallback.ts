@@ -1,6 +1,7 @@
 import type { AcademyContent } from './types';
+import { publishedSchedule } from './schedule';
 export const fallbackContent: AcademyContent = {
-  source: 'fallback', faqsConfirmed: false, programsConfirmed: false, scheduleConfirmed: false,
+  source: 'fallback', faqsConfirmed: false, programsConfirmed: true, scheduleConfirmed: true,
   homepage: {
     heroEyebrow: 'BRAZILIAN JIU-JITSU · SALOMÃO BJJ TEAM', heroTitle: ['MORE THAN', 'A MARTIAL ART.', 'A WAY FORWARD.'], heroDescription: 'Find your strength. Build your confidence.\nBecome more, on and off the mat.', primaryCta: 'Plan your first visit', secondaryCta: 'Explore the academy',
     about: { eyebrow: 'ROOTED IN SOMETHING REAL', title: 'Leave your ego.', accent: 'everything.', accentPrefix: 'Bring your', lead: 'Jiu-Jitsu begins with a simple decision: to show up. To be a beginner. To discover what you’re capable of.', body: 'CARIOX brings Brazilian martial arts into a space made for connection. Rooted in the Salomão BJJ Team identity, our vision is built around respect, intentional practice, and the belief that we grow together.', imageCaption: 'BRAZILIAN IN SPIRIT. CARIOX BY NATURE.' },
@@ -19,15 +20,15 @@ export const fallbackContent: AcademyContent = {
     { key:'collection', url:'/images/collection.jpg', title:'Carry the culture.', label:'05 / THE CARIOX COLLECTION', description:'Brazilian roots. A distinctive identity. Explore the supplied apparel concept; availability is not yet announced.', alt:'CARIOX black and gold Brazilian martial arts apparel concept', tab:'The collection' },
   ],
   programs: [
-    {title:'The first step',tag:'NEW TO JIU-JITSU',body:'Curious about Brazilian Jiu-Jitsu? Tell us what brings you to the mat. The academy can help determine the right starting point once its program information is confirmed.'},
-    {title:'The next generation',tag:'PARENTS & FAMILIES',body:'Explore an interest in training for your child. Age groups, children’s programs, and enrollment requirements will be published after confirmation.'},
-    {title:'The deeper practice',tag:'EXPERIENCED PRACTITIONERS',body:'Interested in advancing your practice, No-Gi, or private instruction? Share your goals through the inquiry form. Offered formats and coaching details are awaiting confirmation.'},
+    {title:'The first step',tag:'NEW TO JIU-JITSU',body:'Explore Gi and No-Gi Jiu-Jitsu on the weekly schedule. Share your experience and goals with the team to find a suitable starting point before attending.'},
+    {title:'The next generation',tag:'PARENTS & FAMILIES',body:'Kids’ Jiu-Jitsu meets Monday, Wednesday, Friday, and Saturday. Kids’ Muay Thai meets Tuesday and Thursday. Ask the academy about suitable ages and enrollment requirements.'},
+    {title:'The deeper practice',tag:'EXPERIENCED PRACTITIONERS',body:'The weekly schedule includes Gi and No-Gi Jiu-Jitsu, Muay Thai, MMA, strength and conditioning, open mat, and sparring / work sessions. Ask the team which sessions fit your training goals.'},
   ],
   faqs: [
     {question:'Do I need experience to explore Jiu-Jitsu?',answer:'No prior knowledge is needed to learn about the practice. If you’re new, share that with the academy so the team can confirm a suitable introduction before you attend.'},
     {question:'What should I bring for a first visit?',answer:'As a general starting point, bring water and comfortable training clothes. Ask the academy to confirm its uniform, equipment, and hygiene requirements before joining a class.'},
-    {question:'Can I ask about training for my child?',answer:'Absolutely. Use the inquiry form to share your child’s age and your questions. Children’s programs, age groups, and enrollment requirements still need academy confirmation.'},
-    {question:'Where can I find pricing and the real schedule?',answer:'Confirmed pricing, operating hours, and class times have not yet been supplied. The schedule and calendar on this preview use sample information and should not be used to plan an actual class.'},
+    {question:'Can I ask about training for my child?',answer:'Yes. Kids’ Jiu-Jitsu is Gi on Monday and Wednesday, and No-Gi on Friday and Saturday. Kids’ Muay Thai is on Tuesday and Thursday. Check the schedule for times and ask the academy about suitable ages and enrollment requirements.'},
+    {question:'Where can I find pricing and the class schedule?',answer:'The academy’s weekly class schedule is published in the Schedule section, with day and program filters and Gi/No-Gi labels. Prices and general operating hours still need confirmation. The booking calendar remains a demonstration and does not reserve a class.'},
     {question:'Does booking here reserve a real class?',answer:'This is a booking preview. You can try selecting a date, time, and session, but no reservation, email, or calendar event is created. A real booking will be available once the academy connects its scheduling service.'},
   ],
   instructors: [{
@@ -46,5 +47,5 @@ export const fallbackContent: AcademyContent = {
       { event: 'Pan American', placement: 3 },
       { event: 'American National', placement: 3 },
     ],
-  }], schedules: [], prices: [], business: null, announcements: [],
+  }], schedules: publishedSchedule, prices: [], business: null, announcements: [],
 };

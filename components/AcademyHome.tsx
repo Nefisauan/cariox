@@ -18,33 +18,19 @@ import { ContentHeading, ContentLines } from './content/ContentHeading';
 import { BusinessContact } from './content/BusinessContact';
 import MembershipPricing from './content/MembershipPricing';
 import InstructorSection from './content/InstructorSection';
+import ClassSchedule from './content/ClassSchedule';
 
 const Booking = dynamic(() => import('../components/Booking'), { ssr: false });
-const sampleClasses = [
-  { day: 'Mon', time: '09:00', period: 'AM', name: 'Foundations', type: 'Foundations', level: 'Beginner' },
-  { day: 'Mon', time: '05:30', period: 'PM', name: 'Gi practice', type: 'Gi', level: 'All levels' },
-  { day: 'Tue', time: '12:00', period: 'PM', name: 'No-Gi practice', type: 'No-Gi', level: 'All levels' },
-  { day: 'Wed', time: '05:30', period: 'PM', name: 'Foundations', type: 'Foundations', level: 'Beginner' },
-  { day: 'Thu', time: '07:00', period: 'PM', name: 'Gi practice', type: 'Gi', level: 'Experienced' },
-  { day: 'Fri', time: '12:00', period: 'PM', name: 'No-Gi practice', type: 'No-Gi', level: 'All levels' },
-  { day: 'Sat', time: '09:00', period: 'AM', name: 'Gi practice', type: 'Gi', level: 'All levels' },
-];
-const days = [{ label: 'Mon', full: 'Monday' }, { label: 'Tue', full: 'Tuesday' }, { label: 'Wed', full: 'Wednesday' }, { label: 'Thu', full: 'Thursday' }, { label: 'Fri', full: 'Friday' }, { label: 'Sat', full: 'Saturday' }, { label: 'Sun', full: 'Sunday' }];
 
 export default function Home() {
   const content = useAcademyContent();
   const { homepage, photos } = content;
   const photoPath = (index: number) => photos[index].url;
-  const scheduleClasses = content.scheduleConfirmed ? content.schedules : sampleClasses;
-  const formats = ['All programs', ...new Set(scheduleClasses.map(item => item.type))];
   const [booking, setBooking] = useState(false);
   const [gallery, setGallery] = useState<number | null>(null);
-  const [day, setDay] = useState('Mon');
-  const [filter, setFilter] = useState('All programs');
   const hero = useRef<HTMLElement>(null);
   usePageMotion();
   const book = () => setBooking(true);
-  const classes = scheduleClasses.filter(item => item.day === day && (filter === 'All programs' || filter === item.type));
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <Navigation book={book} />
@@ -74,7 +60,7 @@ export default function Home() {
 
       <InstructorSection />
 
-      <section id="schedule" className="schedule section-pad"><div className="section-kicker reveal"><span>05 / MAKE TIME FOR YOURSELF</span><span>CONSISTENCY CHANGES EVERYTHING.</span></div><div className="section-heading reveal"><h2>A little discipline.<br /><em>A different day.</em></h2><button className="button dark" onClick={book}>Explore your first session <ArrowUpRight size={16} /></button></div><div className="schedule-notice"><span className="status-dot" /><div><b>{content.scheduleConfirmed ? "Academy class schedule" : "Explore a sample week."}</b><p>{content.scheduleConfirmed ? "Published class times. Attendance and availability must be confirmed with the academy." : "Classes, coaches, levels, and times are illustrative. Confirmed academy classes will replace this preview."}</p></div></div><div className="schedule-toolbar"><div className="days" aria-label="Filter by day">{days.map(item => <button key={item.label} onClick={() => setDay(item.label)} className={day === item.label ? 'active' : ''} aria-label={item.full} aria-pressed={day === item.label}>{item.label}</button>)}</div><select aria-label="Filter by program" value={filter} onChange={event => setFilter(event.target.value)}>{formats.map(label => <option key={label}>{label}</option>)}</select></div><div className="schedule-results" aria-live="polite">{classes.map((item, index) => <div className="class-row" key={`${day}-${index}`}><div className="class-time">{item.time}<small>{item.period}</small></div><div className="class-title"><h3>{item.name}</h3><span>{content.scheduleConfirmed ? ('instructor' in item && item.instructor ? String(item.instructor) : 'Ask the academy about coaching') : 'Sample class · Coach to be confirmed'}{'timezone' in item ? ` · ${String(item.timezone)}` : ''}</span></div><span className="level-tag">{item.level}</span><button className="icon-button" onClick={book} aria-label={`Explore sample ${item.name} booking`}><ArrowUpRight size={20} /></button></div>)}{!classes.length && <div className="empty-schedule"><span className="eyebrow">ROOM TO RESET</span><h3>A little space in your week.</h3><p>{content.scheduleConfirmed ? 'No classes match this day and filter.' : 'No sample classes match this day and filter.'}</p><button className="underlined-link" onClick={() => { setDay('Mon'); setFilter('All programs'); }}>{content.scheduleConfirmed ? 'Reset filters' : 'View the sample week'} <ArrowRight size={16} /></button></div>}</div><p className="schedule-footer">{content.scheduleConfirmed ? 'Confirm your session with the academy before attending.' : 'This is a preview of the scheduling experience.'}<span>{content.scheduleConfirmed ? 'OWNER-APPROVED SCHEDULE' : 'ALL TIMES ARE SAMPLE TIMES'}</span></p></section>
+      <ClassSchedule />
 
       <MembershipPricing prices={content.prices} />
       <section className="culture section-pad"><span className="eyebrow reveal">{homepage.culture.eyebrow}</span><h2 className="reveal">{homepage.culture.title}<br /><em>{homepage.culture.accent}</em><span aria-hidden="true"></span></h2><div className="culture-bottom reveal"><p><ContentLines text={homepage.culture.body} /></p><div><span>THE CARIOX PHILOSOPHY</span><p><ContentLines text={homepage.culture.quote} /></p></div></div></section>
@@ -84,7 +70,7 @@ export default function Home() {
       <section id="contact" className="contact section-pad"><div className="section-kicker reveal"><span>07 / LET’S BEGIN</span><span>THE HARDEST PART IS SHOWING UP.</span></div><div className="contact-grid"><div className="reveal"><span className="eyebrow muted-text">{homepage.contact.eyebrow}</span><ContentHeading title={homepage.contact.title} accent={homepage.contact.accent} /><p>{homepage.contact.body}</p><button className="button gold" onClick={book}>{homepage.primaryCta} <ArrowUpRight size={17} /></button><BusinessContact business={content.business} /></div><ContactForm /></div></section>
       <section className="final-cta"><span>ONE DECISION. ENDLESS POSSIBILITY.</span><button onClick={book}>STEP ONTO<br />THE <em>MAT.</em><MoveUpRight aria-hidden="true" /></button><div className="final-cta-foot"><span>DISCIPLINE STARTS WITH A DECISION.</span><span>MAKE YOURS.</span></div></section>
     </main>
-    <footer><div className="footer-top"><a className="logo" href="#home" aria-label="CARIOX home"><Wordmark /></a><p>Brazilian roots.<br />A stronger tomorrow.</p><a href="#home">Back to the top <ArrowUpRight size={16} /></a></div><nav className="footer-links" aria-label="Footer navigation"><a href="#about">The academy</a><a href="#programs">Your practice</a><a href="#schedule">Schedule preview</a><a href="#first-visit">First visit & FAQ</a><a href="#contact">Get in touch</a></nav><div className="footer-bottom"><span>© {new Date().getFullYear()} {content.branding.wordmarkLeft}{content.branding.wordmarkRight} · {content.branding.affiliation}</span><span>ACADEMY PREVIEW · BOOKINGS & CHAT ARE DEMOS</span><span>BUILT WITH PURPOSE. OSS.</span></div></footer>
+    <footer><div className="footer-top"><a className="logo" href="#home" aria-label="CARIOX home"><Wordmark /></a><p>Brazilian roots.<br />A stronger tomorrow.</p><a href="#home">Back to the top <ArrowUpRight size={16} /></a></div><nav className="footer-links" aria-label="Footer navigation"><a href="#about">The academy</a><a href="#programs">Your practice</a><a href="#schedule">Class schedule</a><a href="#first-visit">First visit & FAQ</a><a href="#contact">Get in touch</a></nav><div className="footer-bottom"><span>© {new Date().getFullYear()} {content.branding.wordmarkLeft}{content.branding.wordmarkRight} · {content.branding.affiliation}</span><span>ACADEMY PREVIEW · BOOKINGS & CHAT ARE DEMOS</span><span>BUILT WITH PURPOSE. OSS.</span></div></footer>
     <div className="mobile-visit-bar"><span>YOUR NEXT CHAPTER.</span><button onClick={book}>{homepage.primaryCta} <ArrowUpRight size={17} /></button></div>
     <Receptionist book={book} />
     {booking && <Booking close={() => setBooking(false)} />}

@@ -2,7 +2,7 @@
 
 Existing Next.js / React / TypeScript academy design, with account-independent Cloudflare, Sanity CMS, and Meta tracking readiness on `codex/cloudflare-cms-meta-readiness`.
 
-The original 3D/perspective interactions, photography, responsive CSS, and fallback content are preserved. No production deployment or account creation is included in this branch. Vercel Git deployments are disabled only for this feature branch.
+The original 3D/perspective interactions, photography, responsive CSS, and fallback content are preserved. The client subsequently authorized Vercel production deployment through `main`. Vercel Git deployments remain disabled only for the feature branch. No external accounts were created.
 
 Read the current engineering handoff first:
 
@@ -32,7 +32,7 @@ No localhost server is required or started by these commands. `cf:check` uses Wr
 
 ## Content and integration boundaries
 
-The server fetches published Sanity content only when both public project settings exist; otherwise the current checked-in content is used without a CMS request. Missing/invalid/offline content retains fallbacks. Program offers, schedules, pricing, business information, and promotions require approved published data. The supplied instructor portrait and competition record are included as fallback content; confirmed CMS profiles can replace them. See [instructor content provenance](./docs/instructor-content.md). The supplied concept imagery and original dimension-free edits remain; see [image edit details](./docs/image-edits.md).
+The server fetches published Sanity content only when both public project settings exist; otherwise the current checked-in content is used without a CMS request. Missing/invalid/offline content retains fallbacks. The supplied 43-session schedule and corresponding program descriptions are approved fallback content; see [schedule transcription and uniform rules](./docs/schedule-content.md). Prices, business contacts, and promotions still need approved published data. The supplied instructor portrait and competition record are included as fallback content; confirmed CMS profiles can replace them. See [instructor content provenance](./docs/instructor-content.md). The supplied concept imagery and original dimension-free edits remain; see [image edit details](./docs/image-edits.md).
 
 Booking is a browser-memory demo. Inquiries are local drafts, and chat replies are scripted. New live API contracts are disconnected and return 503, never false success. No demo action sends a Lead or CompleteRegistration event. Marketing tracking requires a real configured Pixel and explicit consent; optional CAPI has no active call site. There are no client-side API secrets.
 

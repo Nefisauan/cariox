@@ -22,5 +22,6 @@ test('provider adapters must actually verify registration and idempotency is req
 
 test('future AI knowledge excludes the illustrative schedule and unconfirmed program interests',async()=>{
  const {buildAcademyKnowledge}=await import('../lib/services/knowledge');const {fallbackContent}=await import('../lib/content/fallback');
- const knowledge=buildAcademyKnowledge(fallbackContent);assert.deepEqual(knowledge.programs,[]);assert.deepEqual(knowledge.schedule,[]);assert.equal(knowledge.business,null);assert.equal(knowledge.serviceStatus.registration,'not-connected');
+ const knowledge=buildAcademyKnowledge({...fallbackContent,programsConfirmed:false,scheduleConfirmed:false});assert.deepEqual(knowledge.programs,[]);assert.deepEqual(knowledge.schedule,[]);assert.equal(knowledge.business,null);assert.equal(knowledge.serviceStatus.registration,'not-connected');
+ const approved=buildAcademyKnowledge(fallbackContent);assert.equal(approved.schedule.length,43);assert.equal(approved.programs.length,3);
 });

@@ -24,6 +24,10 @@ const visibleText = document.body.cloneNode(true);
 visibleText.querySelectorAll('script,style').forEach(element => element.remove());
 assert.ok(!/[\p{Extended_Pictographic}]/u.test(visibleText.textContent.replace(/©/g,'')), 'Website copy must not contain emoji decorations');
 assert.equal(document.querySelectorAll('#instructors .competition-record li').length,10,'All ten supplied competition results must render in the fallback build');
+assert.equal(document.querySelectorAll('#schedule .class-row').length,43,'All 43 supplied weekly classes must render');
+assert.ok(!/sample|illustrative|preview/i.test(document.querySelector('#schedule').textContent),'Published schedule must not contain demo timetable copy');
+for (const id of ['wed-0930-am','wed-0400-pm']) assert.equal(document.querySelector(`[data-class-id="${id}"] .level-tag`).textContent,'Gi');
+for (const id of ['fri-0930-am','fri-0400-pm','sat-0900-am']) assert.equal(document.querySelector(`[data-class-id="${id}"] .level-tag`).textContent,'No-Gi');
 const results = await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] }, rules: { 'color-contrast': { enabled: false } } });
 const report = results.violations.map(item => ({ id: item.id, impact: item.impact, help: item.help, elements: item.nodes.map(node => node.target) }));
 if (report.length) { console.error(JSON.stringify(report, null, 2)); process.exitCode = 1; }

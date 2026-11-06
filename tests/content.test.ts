@@ -30,7 +30,8 @@ test('missing or empty CMS content retains existing content and photograph slots
   assert.deepEqual(resolved.photos,fallbackContent.photos);
   assert.deepEqual(resolved.programs,fallbackContent.programs);
   assert.deepEqual(resolved.instructors,fallbackContent.instructors);
-  assert.equal(resolved.programsConfirmed,false);assert.equal(resolved.scheduleConfirmed,false);
+  assert.equal(resolved.programsConfirmed,true);assert.equal(resolved.scheduleConfirmed,true);
+  assert.deepEqual(resolved.schedules,fallbackContent.schedules);
   assert.ok(homepageSchema.safeParse(fallbackContent.homepage).success);
 });
 test('supplied instructor results survive empty or invalid CMS data and approved profiles can replace them',()=>{

@@ -4,9 +4,13 @@ Branch: `codex/cloudflare-cms-meta-readiness`
 Baseline: `main` commit `4da844a`  
 Prepared: November 6, 2026
 
-## Scope and deployment safety
+## Current release status
 
-All work is isolated on the feature branch. The original design, five image slots, 3D/perspective interactions, dialogs, gallery, local fonts, and responsive CSS remain. No production deployment, Worker upload, account/project creation, domain/DNS change, ad activation, paid subscription, or deletion of Vercel resources was performed. Vercel automatic Git deployments are disabled only for this feature branch in `vercel.json`; main is not disabled. Do not merge this branch as a substitute for an approved production release.
+The client subsequently authorized Vercel production deployment on November 6, 2026. Commit `497d132` was deployed successfully to https://cariox-smoky.vercel.app through `main`, with the instructor portrait, ten competition results, and no emoji decorations verified over HTTPS. The next authorized update replaces the sample week with the supplied 43-session timetable and corrected Gi/No-Gi rules; see [schedule provenance](./docs/schedule-content.md). Registration and the booking calendar remain demos. No Cloudflare migration, CMS connection, Meta activation, account creation, paid subscription, or DNS change is authorized by this content release.
+
+## Original readiness scope (historical)
+
+The initial readiness work was isolated on the feature branch before the later release authorization. The original design, five image slots, 3D/perspective interactions, dialogs, gallery, local fonts, and responsive CSS remain. No production deployment, Worker upload, account/project creation, domain/DNS change, ad activation, paid subscription, or deletion of Vercel resources was performed. Vercel automatic Git deployments are disabled only for this feature branch in `vercel.json`; main is not disabled. Do not merge this branch as a substitute for an approved production release.
 
 No real account IDs, business claims, Pixel IDs, access tokens, or external service credentials were invented. Numeric IDs and receipts in tests are explicitly synthetic unit fixtures; tests do not send them to external providers.
 
@@ -64,24 +68,24 @@ Files for this follow-up: `components/content/InstructorSection.tsx`, `component
 | Meta Pixel | Configured consent/dedup code, default disabled | Real owner Pixel ID, authorized activation, consent review, Test Events |
 | CAPI | Server-only optional payload/sender foundation | Verified provider callbacks, current server consent evidence, owner token/API version, Test Events and dedup diagnostics |
 | Cloudflare hosting | Adapter builds and dry-run packages | Owner account, staging configuration/secrets, authorized deployment and runtime QA |
-| Vercel production | Retained; main was not changed by this work | No action required to keep the current deployment |
+| Vercel production | Existing project retained; client authorized releases through main | Verify each release at cariox-smoky.vercel.app |
 
 ## What was actually tested
 
 - Next.js production build and TypeScript checks under Node 24.
 - Cloudflare/OpenNext production build and Wrangler `--dry-run`; no upload/deployment. The instructor update was rebuilt and dry-run packaged at about 8,233 KiB uncompressed / 2,034 KiB gzip; nothing was uploaded.
 - Wrangler binding/runtime type generation. Generated global Workers declarations are excluded from the browser/Next type project to prevent conflicting global DOM types.
-- 40 automated tests (including the instructor résumé and CMS fallback behavior): validation; CMS schema compile and GROQ parse; absent/invalid/offline CMS; approval/fallback data; image URL/time-zone/metadata guards; booking/calendar flow; mobile menu and modal focus; FAQs; copy/edit inquiry; chat handoff; mouse/touch/reduced-motion depth; numbered panels; image loading/failure; disconnected APIs and fake-receipt rejection; consent/deduplication; CAPI no-send and hashing behavior.
-- Outside the approved instructor section and removed emoji glyphs, fallback visible text and DOM/class structure match the production baseline; all original visual/animation/responsive CSS bytes match the baseline. Additions are scoped to the instructor profile, plain separators, and consent UI (inactive by default).
-- Production HTML audit: 26 structural WCAG checks pass; one h1, unique IDs, all section targets, and all 12 image placements resolve; all ten supplied competition results render and no emoji decorations appear in page copy; no annotated reference photos are shown. Preview indexing remains disabled and no metadata points at localhost.
+- 45 automated tests (including the 43-session transcription, Gi/No-Gi exceptions, schedule filters, instructor résumé, and CMS fallback behavior): validation; CMS schema compile and GROQ parse; absent/invalid/offline CMS; approval/fallback data; image URL/time-zone/metadata guards; booking/calendar flow; mobile menu and modal focus; FAQs; copy/edit inquiry; chat handoff; mouse/touch/reduced-motion depth; numbered panels; image loading/failure; disconnected APIs and fake-receipt rejection; consent/deduplication; CAPI no-send and hashing behavior.
+- Outside the approved instructor/schedule sections, associated program/FAQ copy, footer schedule label, and removed emoji glyphs, fallback visible text and DOM/class structure match the production baseline; all original visual/animation/responsive CSS bytes match the baseline. Additions are scoped to the instructor profile, plain separators, and consent UI (inactive by default).
+- Production HTML audit: 26 structural WCAG checks pass; one h1, unique IDs, all section targets, and all 12 image placements resolve; all ten supplied competition results and all 43 weekly classes render, the Wednesday exceptions are Gi, and no emoji decorations appear in page copy; no annotated reference photos are shown. Preview indexing remains disabled and no metadata points at localhost.
 - Complete dependency audit: zero known vulnerabilities after pinned security overrides. Build/Studio tooling is separate from runtime dependencies. Overrides for glob, minimatch, js-yaml, smol-toml, and undici must be reviewed against future upstream updates rather than silently removed or replaced by `npm audit fix --force`.
 - Sanity schema compile works offline. A missing-settings Studio preflight intentionally exits with a clear error. No successful owner-project Studio login/publish cycle has been tested.
 
-Not performed: production deployment; real Cloudflare Worker execution; actual Sanity project/media/CORS/publish tests; Meta Events Manager/Pixel Helper tests with a real ID; real mail/calendar/LLM calls; real-device screenshots, cross-browser visual testing, Lighthouse/Core Web Vitals, or production load testing. Existing no-localhost instructions and this task's no-production-deployment boundary were respected. DOM/CSS parity and interaction tests do not substitute for an authorized staging browser/device pass.
+Not performed: real Cloudflare Worker execution; actual Sanity project/media/CORS/publish tests; Meta Events Manager/Pixel Helper tests with a real ID; real mail/calendar/LLM calls; real-device screenshots, cross-browser visual testing, Lighthouse/Core Web Vitals, or production load testing. No localhost server was started. Vercel production publication was separately authorized after the original readiness work. DOM/CSS parity and interaction tests do not substitute for an authorized staging browser/device pass.
 
 ## Exact remaining sequence
 
-1. **Review this feature branch.** Keep production main and the Vercel deployment as they are. Use Node 24 and `npm ci`; keep flags off and IDs/tokens blank until actual access arrives.
+1. **Review the current release and feature branch.** Vercel main-branch releases are now authorized for the supplied content updates. Use Node 24 and `npm ci`; keep flags off and IDs/tokens blank until actual access arrives.
 2. **Collect owner facts and access.** Obtain existing Cloudflare account access, Sanity project ID/dataset/editor/read permissions, Meta data-source access/Pixel ID, approved business details/programs/instructors/schedule/pricing/images, and the chosen booking/contact/AI providers. Do not infer the academy time zone or claim a free offer without approval.
 3. **Configure and populate Sanity.** Fill the public project/dataset and separate Studio pair in ignored local/deployment environment settings; add a server-only read token only if necessary. Build Studio, configure authorized origins, create/publish approved documents, run TypeGen, and test full edit/publish/fallback behavior as documented in `SANITY_SETUP.md`.
 4. **Implement real service adapters.** Replace the empty registry with the owner's selected providers. Add real authentication/receipt authorization, verified webhooks where applicable, live slot/capacity checks, durable idempotency, rate limits/bot controls, error recovery, and persistent consent evidence. Do not relabel the demo UI as live until the actual provider has been tested. Connect `buildAcademyKnowledge` to an actual server-side AI adapter only after verified business data and provider access exist.

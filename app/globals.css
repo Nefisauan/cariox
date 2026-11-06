@@ -448,3 +448,11 @@ dialog::backdrop{background:#0b170edb;backdrop-filter:blur(8px)}
 @media(max-width:600px){.instructor-profile{grid-template-columns:1fr;gap:32px}.instructor-portrait{max-width:460px;width:100%;margin-inline:auto}.instructor-portrait figcaption{flex-wrap:nowrap;padding:17px 20px}.instructor-details h2{font-size:51px}.instructors-grid .instructor-intro{font-size:13px;margin-top:20px}.competition-record ul{gap:0 18px}.competition-record li{font-size:11px;gap:10px;min-height:65px}.instructor-profile+.instructor-profile{margin-top:45px;padding-top:40px}}
 @media(max-width:360px){.competition-record ul{grid-template-columns:1fr}.competition-record li{min-height:0;padding:12px 0}}
 @media(hover:none),(prefers-reduced-motion:reduce){.instructor-portrait{transform:none!important}}
+
+.schedule-format-note{border-bottom:1px solid var(--line);padding:0 0 23px;margin-top:-10px;margin-bottom:28px;max-width:900px}
+.schedule-format-note p{font-size:12px;color:var(--muted);line-height:1.9}
+.schedule-format-note b{color:var(--ink);font-weight:600;margin-right:8px}
+#schedule [hidden]{display:none!important}
+#schedule .level-tag{white-space:normal;text-align:center;max-width:190px}
+@media(max-width:1000px){.schedule-toolbar{flex-wrap:wrap;gap:14px}.schedule-toolbar .days{width:100%;justify-content:space-between;gap:0}.schedule-toolbar select{width:100%;min-height:46px;padding:12px}}
+@media(max-width:600px){.schedule-format-note{margin-top:0;padding-bottom:18px;margin-bottom:22px}.schedule-format-note p{font-size:11px}.schedule .days{gap:0}.schedule .days button{min-width:0;flex:1;padding-inline:4px}.schedule .class-row>.icon-button{display:grid;place-items:center}.schedule .level-tag{max-width:calc(100% - 101px)}}

@@ -24,7 +24,7 @@ export const achievementSchema = z.object({ event: text.max(160), placement: z.n
 export const instructorSchema = z.object({ id: text, name: text.optional(), rank: text, experience: text.optional(), specialties: z.array(text).default([]), biography: text.optional(), achievements: z.array(achievementSchema).max(50).default([]), photoUrl: imageUrl, photoAlt: text });
 export type Instructor = z.infer<typeof instructorSchema>;
 export const classSchema = z.object({ id: text, name: text, type: text, level: text, instructor: text.optional() });
-export const scheduleSchema = z.object({ id: text, day: z.enum(['Mon','Tue','Wed','Thu','Fri','Sat','Sun']), time: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]$/), period: z.enum(['AM','PM']), name: text, type: text, level: text, instructor: text.optional(), timezone: text.refine(value => { try { new Intl.DateTimeFormat('en', { timeZone: value }); return true; } catch { return false; } }) });
+export const scheduleSchema = z.object({ id: text, day: z.enum(['Mon','Tue','Wed','Thu','Fri','Sat','Sun']), time: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]$/), period: z.enum(['AM','PM']), name: text, type: text, level: text.optional(), instructor: text.optional(), timezone: text.refine(value => { try { new Intl.DateTimeFormat('en', { timeZone: value }); return true; } catch { return false; } }).optional() });
 export type AcademySchedule = z.infer<typeof scheduleSchema>;
 export const priceSchema = z.object({ id: text, title: text, description: text, amount: z.number().nonnegative(), currency: z.string().regex(/^[A-Z]{3}$/), interval: z.enum(['month','year','session','one-time']) });
 export type MembershipPrice = z.infer<typeof priceSchema>;
