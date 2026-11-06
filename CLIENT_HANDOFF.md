@@ -10,6 +10,12 @@ All work is isolated on the feature branch. The original design, five image slot
 
 No real account IDs, business claims, Pixel IDs, access tokens, or external service credentials were invented. Numeric IDs and receipts in tests are explicitly synthetic unit fixtures; tests do not send them to external providers.
 
+## Instructor and professional presentation update
+
+The client supplied an instructor portrait and competition résumé after the readiness implementation. The instructor section now displays the optimized portrait with interactive depth and ten text-based results, including third place at Pan American and American National. Decorative emoji/star glyphs were removed from the homepage and chat. Existing functional SVG icons remain. Sanity supports editable competition results, and empty CMS instructor data retains the supplied profile. The instructor name/title and biography remain outstanding; the heading currently reads “Your instructor.” See [source details](./docs/instructor-content.md). No production deployment or localhost server was used.
+
+Files for this follow-up: `components/content/InstructorSection.tsx`, `components/AcademyHome.tsx`, `components/Receptionist.tsx`, `app/globals.css`, `public/images/instructor-portrait.webp`, `lib/content/{types,fallback,resolve}.ts`, `lib/sanity/queries.ts`, `sanity/schemaTypes/instructor.ts`, `tests/{content.test.ts,interactions.test.tsx}`, `scripts/{audit-production,check-design-parity}.mjs`, `docs/instructor-content.md`, `SANITY_SETUP.md`, `README.md`, and this handoff.
+
 ## Implemented
 
 ### Cloudflare
@@ -63,11 +69,11 @@ No real account IDs, business claims, Pixel IDs, access tokens, or external serv
 ## What was actually tested
 
 - Next.js production build and TypeScript checks under Node 24.
-- Cloudflare/OpenNext production build and Wrangler `--dry-run`; no upload/deployment. Final measured bundle was about 8,230 KiB uncompressed / 2,033 KiB gzip before documentation-only changes.
+- Cloudflare/OpenNext production build and Wrangler `--dry-run`; no upload/deployment. The instructor update was rebuilt and dry-run packaged at about 8,233 KiB uncompressed / 2,034 KiB gzip; nothing was uploaded.
 - Wrangler binding/runtime type generation. Generated global Workers declarations are excluded from the browser/Next type project to prevent conflicting global DOM types.
-- 38 automated tests: validation; CMS schema compile and GROQ parse; absent/invalid/offline CMS; approval/fallback data; image URL/time-zone/metadata guards; booking/calendar flow; mobile menu and modal focus; FAQs; copy/edit inquiry; chat handoff; mouse/touch/reduced-motion depth; numbered panels; image loading/failure; disconnected APIs and fake-receipt rejection; consent/deduplication; CAPI no-send and hashing behavior.
-- Fallback visible text and DOM/class structure match the production baseline; all original visual/animation/responsive CSS bytes match the baseline. Added consent CSS is inactive by default.
-- Production HTML audit: 24 structural WCAG checks pass; one h1, unique IDs, all section targets, and all 11 image placements resolve; no annotated reference photos are shown. Preview indexing remains disabled and no metadata points at localhost.
+- 40 automated tests (including the instructor résumé and CMS fallback behavior): validation; CMS schema compile and GROQ parse; absent/invalid/offline CMS; approval/fallback data; image URL/time-zone/metadata guards; booking/calendar flow; mobile menu and modal focus; FAQs; copy/edit inquiry; chat handoff; mouse/touch/reduced-motion depth; numbered panels; image loading/failure; disconnected APIs and fake-receipt rejection; consent/deduplication; CAPI no-send and hashing behavior.
+- Outside the approved instructor section and removed emoji glyphs, fallback visible text and DOM/class structure match the production baseline; all original visual/animation/responsive CSS bytes match the baseline. Additions are scoped to the instructor profile, plain separators, and consent UI (inactive by default).
+- Production HTML audit: 26 structural WCAG checks pass; one h1, unique IDs, all section targets, and all 12 image placements resolve; all ten supplied competition results render and no emoji decorations appear in page copy; no annotated reference photos are shown. Preview indexing remains disabled and no metadata points at localhost.
 - Complete dependency audit: zero known vulnerabilities after pinned security overrides. Build/Studio tooling is separate from runtime dependencies. Overrides for glob, minimatch, js-yaml, smol-toml, and undici must be reviewed against future upstream updates rather than silently removed or replaced by `npm audit fix --force`.
 - Sanity schema compile works offline. A missing-settings Studio preflight intentionally exits with a clear error. No successful owner-project Studio login/publish cycle has been tested.
 

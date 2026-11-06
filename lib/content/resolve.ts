@@ -17,7 +17,7 @@ export function resolveAcademyContent(input: unknown, now = new Date()): Academy
   if (!input || typeof input !== 'object' || Array.isArray(input)) return fallbackContent;
   const raw = input as Record<string, unknown>;
   const programs = validArray(programSchema, raw.programs), schedules = validArray(scheduleSchema, raw.schedules), faqs = validArray(faqSchema, raw.faqs);
-  const photos = validArray(photoSchema, raw.photos);
+  const photos = validArray(photoSchema, raw.photos), instructors = validArray(instructorSchema, raw.instructors);
   const business = businessSchema.safeParse(raw.business);
   return {
     ...fallbackContent, source: 'sanity', faqsConfirmed: faqs.length > 0,
@@ -26,7 +26,7 @@ export function resolveAcademyContent(input: unknown, now = new Date()): Academy
     photos: fallbackContent.photos.map(photo => photos.find(item => item.key === photo.key) || photo),
     programs: programs.length ? programs : fallbackContent.programs, programsConfirmed: programs.length > 0,
     schedules, scheduleConfirmed: schedules.length > 0,
-    instructors: validArray(instructorSchema, raw.instructors), prices: validArray(priceSchema, raw.prices),
+    instructors: instructors.length ? instructors : fallbackContent.instructors, prices: validArray(priceSchema, raw.prices),
     business: business.success ? business.data : null,
     announcements: validArray(announcementSchema, raw.announcements).filter(item => (!item.startsAt || new Date(item.startsAt) <= now) && (!item.endsAt || new Date(item.endsAt) > now)),
     faqs: faqs.length ? faqs : fallbackContent.faqs,

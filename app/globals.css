@@ -419,3 +419,32 @@ dialog::backdrop{background:#0b170edb;backdrop-filter:blur(8px)}
 .marketing-consent b{font-size:14px}.marketing-consent p{font-size:12px;max-width:650px;margin-top:8px}.marketing-consent>div:last-child{display:flex;gap:12px;flex-shrink:0}.marketing-consent .button{padding:14px 18px;font-size:12px;min-height:46px}.privacy-choices{position:fixed;bottom:12px;left:16px;z-index:38;font-size:11px;background:var(--paper);border:1px solid var(--line);padding:10px}
 @media(max-width:850px){.marketing-consent{display:block}.marketing-consent>div:last-child{margin-top:18px;flex-wrap:wrap}}
 @media(max-width:650px){.marketing-consent{bottom:calc(85px + env(safe-area-inset-bottom));left:12px;right:12px;padding:18px;max-height:65dvh;overflow:auto}.privacy-choices{bottom:calc(85px + env(safe-area-inset-bottom))}}
+
+/* Approved instructor portrait and typographic results; no emoji decorations. */
+.principles .asterisk{width:1px;height:22px;background:currentColor;opacity:.4;flex-shrink:0}
+.about-copy .little-cross{width:2px;min-width:2px;height:45px;background:#97977b;margin-top:5px}
+.image-corner>span,.culture h2>span{display:none}
+.instructor-profile{grid-template-columns:.95fr 1.05fr;gap:7%;align-items:start}
+.instructor-profile+.instructor-profile{margin-top:75px;padding-top:55px;border-top:1px solid var(--line)}
+.instructor-portrait{position:relative;min-width:0;background:#6c7070;box-shadow:12px 18px 30px #1b251415;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .3s ease-out}
+.instructor-portrait figure{margin:0}
+.instructor-portrait img{display:block;width:100%;height:auto;aspect-ratio:1320/1615;object-fit:cover}
+.instructor-portrait figcaption{position:relative;display:flex;justify-content:space-between;gap:15px;align-items:center;background:var(--ink);color:var(--paper);padding:20px 23px;font-size:8px;letter-spacing:1.4px}
+.instructor-portrait figcaption>span:first-child{font:700 italic 26px var(--heading);letter-spacing:-.5px;color:var(--gold)}
+.instructor-details{min-width:0}
+.instructors-grid .instructor-intro{margin-top:22px;max-width:460px;font-size:14px;color:var(--muted)}
+.instructor-identity{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.instructor-identity h3{font:600 33px var(--heading);line-height:1.1}
+.instructor-identity p{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.7}
+.instructors-grid .instructor-biography,.instructors-grid .instructor-specialties{font-size:13px;margin-top:16px;color:var(--muted)}
+.competition-record{margin-top:27px}
+.competition-record h4{font:500 9px var(--body);letter-spacing:1.6px;text-transform:uppercase;margin:0 0 13px;color:var(--muted)}
+.competition-record ul{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;list-style:none;margin:0;padding:0}
+.competition-record li{display:flex;align-items:center;gap:12px;min-width:0;padding:15px 0;border-top:1px solid var(--line);font-size:11px;line-height:1.5}
+.competition-placement{flex-shrink:0;width:29px;font:600 24px var(--heading);color:#7b631f;font-variant-numeric:tabular-nums}
+.competition-placement.place-3{color:#756047}
+.instructor-details>.underlined-link{margin-top:24px}
+@media(max-width:850px){.instructor-profile{gap:5%;grid-template-columns:.85fr 1.15fr}.competition-record ul{gap:0 12px}.competition-record li{gap:8px;font-size:10px}.instructor-portrait figcaption{padding:15px;flex-wrap:wrap;gap:6px}}
+@media(max-width:600px){.instructor-profile{grid-template-columns:1fr;gap:32px}.instructor-portrait{max-width:460px;width:100%;margin-inline:auto}.instructor-portrait figcaption{flex-wrap:nowrap;padding:17px 20px}.instructor-details h2{font-size:51px}.instructors-grid .instructor-intro{font-size:13px;margin-top:20px}.competition-record ul{gap:0 18px}.competition-record li{font-size:11px;gap:10px;min-height:65px}.instructor-profile+.instructor-profile{margin-top:45px;padding-top:40px}}
+@media(max-width:360px){.competition-record ul{grid-template-columns:1fr}.competition-record li{min-height:0;padding:12px 0}}
+@media(hover:none),(prefers-reduced-motion:reduce){.instructor-portrait{transform:none!important}}

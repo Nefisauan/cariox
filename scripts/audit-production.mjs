@@ -20,6 +20,10 @@ for (const image of document.querySelectorAll('img')) {
 }
 assert.ok(!document.head.innerHTML.includes('localhost'), 'Production metadata must not link to localhost');
 assert.ok(document.querySelector('meta[name="robots"]')?.content.includes('noindex'), 'Unverified preview must stay out of search');
+const visibleText = document.body.cloneNode(true);
+visibleText.querySelectorAll('script,style').forEach(element => element.remove());
+assert.ok(!/[\p{Extended_Pictographic}]/u.test(visibleText.textContent.replace(/©/g,'')), 'Website copy must not contain emoji decorations');
+assert.equal(document.querySelectorAll('#instructors .competition-record li').length,10,'All ten supplied competition results must render in the fallback build');
 const results = await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] }, rules: { 'color-contrast': { enabled: false } } });
 const report = results.violations.map(item => ({ id: item.id, impact: item.impact, help: item.help, elements: item.nodes.map(node => node.target) }));
 if (report.length) { console.error(JSON.stringify(report, null, 2)); process.exitCode = 1; }

@@ -29,7 +29,23 @@ const { default: Navigation } = await import('../components/Navigation');
 const { default: FirstVisit } = await import('../components/FirstVisit');
 const { default: ContactForm } = await import('../components/ContactForm');
 const { default: Receptionist } = await import('../components/Receptionist');
+const { default: InstructorSection } = await import('../components/content/InstructorSection');
 afterEach(() => { cleanup(); document.body.style.overflow = ''; });
+
+test('instructor portrait and all supplied competition results render as accessible text without medal emojis', () => {
+  const view = render(<InstructorSection />);
+  assert.ok(view.getByRole('img', { name: /CARIOX instructor/ }));
+  assert.ok(view.getByRole('heading', { name: 'Your instructor' }));
+  const results = view.getByRole('list', { name: 'Instructor competition results' });
+  assert.equal(results.querySelectorAll('li').length, 10);
+  assert.equal(results.querySelectorAll('.place-1').length, 7);
+  assert.equal(results.querySelectorAll('.place-3').length, 3);
+  for (const event of ['World No-Gi','Pan American','American National']) {
+    assert.match(view.getByText(event).closest('li')!.textContent!, /3rd place/);
+  }
+  assert.ok(!/\p{Extended_Pictographic}/u.test(view.container.textContent!));
+  assert.equal(view.getByRole('link', { name: /Ask about training/ }).getAttribute('href'), '#contact');
+});
 
 test('1–2–3 panels retain visible headings and details across open, close, and reopen', () => {
   const view = render(<ProgramExplorer />);

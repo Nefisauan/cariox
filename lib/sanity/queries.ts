@@ -6,7 +6,7 @@ export const ACADEMY_QUERY = defineQuery(`{
   "branding": *[_type == "branding" && _id == "branding"][0]{wordmarkLeft,wordmarkRight,tagline,affiliation,"logoUrl":logo.asset->url},
   "photos": *[_type == "academyPhoto" && enabled == true] {key,title,label,description,alt,tab,"url":image.asset->url},
   "programs": *[_type == "program" && active == true && confirmed == true] | order(order asc) {title,tag,body},
-  "instructors": *[_type == "instructor" && active == true && confirmed == true] | order(order asc) {"id":_id,name,rank,experience,specialties,biography,"photoUrl":photo.asset->url,photoAlt},
+  "instructors": *[_type == "instructor" && active == true && confirmed == true] | order(order asc) {"id":_id,name,rank,experience,specialties,biography,"achievements":coalesce(achievements[]{event,placement},[]),"photoUrl":photo.asset->url,photoAlt},
   "schedules": *[_type == "schedule" && active == true && confirmed == true && class->active == true && class->confirmed == true && class->program->active == true && class->program->confirmed == true] | order(order asc) {"id":_id,day,time,period,timezone,"name":class->name,"type":class->format,"level":class->level,"instructor":select(class->instructor->confirmed == true && class->instructor->active == true => class->instructor->name)},
   "prices": *[_type == "membershipPrice" && active == true && confirmed == true] | order(order asc) {"id":_id,title,description,amount,currency,interval},
   "business": *[_type == "businessInformation" && _id == "businessInformation" && confirmed == true][0]{name,address,phone,email,timezone,hours,mapUrl,socialLinks},

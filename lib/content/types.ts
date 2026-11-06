@@ -20,7 +20,8 @@ export const homepageSchema = z.object({
 export type HomepageContent = z.infer<typeof homepageSchema>;
 export const brandingSchema = z.object({ wordmarkLeft: text.max(20), wordmarkRight: text.max(20), tagline: text.max(100), affiliation: text.max(100), logoUrl: imageUrl.optional() });
 export type Branding = z.infer<typeof brandingSchema>;
-export const instructorSchema = z.object({ id: text, name: text, rank: text, experience: text.optional(), specialties: z.array(text).default([]), biography: text, photoUrl: imageUrl, photoAlt: text });
+export const achievementSchema = z.object({ event: text.max(160), placement: z.number().int().min(1).max(3) });
+export const instructorSchema = z.object({ id: text, name: text.optional(), rank: text, experience: text.optional(), specialties: z.array(text).default([]), biography: text.optional(), achievements: z.array(achievementSchema).max(50).default([]), photoUrl: imageUrl, photoAlt: text });
 export type Instructor = z.infer<typeof instructorSchema>;
 export const classSchema = z.object({ id: text, name: text, type: text, level: text, instructor: text.optional() });
 export const scheduleSchema = z.object({ id: text, day: z.enum(['Mon','Tue','Wed','Thu','Fri','Sat','Sun']), time: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]$/), period: z.enum(['AM','PM']), name: text, type: text, level: text, instructor: text.optional(), timezone: text.refine(value => { try { new Intl.DateTimeFormat('en', { timeZone: value }); return true; } catch { return false; } }) });

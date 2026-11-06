@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { fallbackContent } from '../lib/content/fallback';
 import { resolveAcademyContent } from '../lib/content/resolve';
 import { getSanityEnvironment } from '../lib/sanity/env';
-import { photoSchema, homepageSchema, scheduleSchema } from '../lib/content/types';
+import { photoSchema, homepageSchema, scheduleSchema, instructorSchema } from '../lib/content/types';
 import { schemaTypes } from '../sanity/schemaTypes';
 import { loadPublishedContent } from '../lib/content/load-published';
 import { ACADEMY_QUERY } from '../lib/sanity/queries';
@@ -29,8 +29,18 @@ test('missing or empty CMS content retains existing content and photograph slots
   assert.deepEqual(resolved.homepage,fallbackContent.homepage);
   assert.deepEqual(resolved.photos,fallbackContent.photos);
   assert.deepEqual(resolved.programs,fallbackContent.programs);
+  assert.deepEqual(resolved.instructors,fallbackContent.instructors);
   assert.equal(resolved.programsConfirmed,false);assert.equal(resolved.scheduleConfirmed,false);
   assert.ok(homepageSchema.safeParse(fallbackContent.homepage).success);
+});
+test('supplied instructor results survive empty or invalid CMS data and approved profiles can replace them',()=>{
+  for (const instructors of [[], [{id:'invalid',achievements:[{event:'Invalid result',placement:0}]}]]) {
+    assert.deepEqual(resolveAcademyContent({instructors}).instructors,fallbackContent.instructors);
+  }
+  const approved={...fallbackContent.instructors[0],id:'cms-fixture',name:'Test Instructor',achievements:[{event:'Test event',placement:2}]};
+  assert.equal(resolveAcademyContent({instructors:[approved]}).instructors[0].name,'Test Instructor');
+  assert.equal(instructorSchema.safeParse({...approved,achievements:[{event:'Test event',placement:4}]}).success,false);
+  assert.equal(instructorSchema.safeParse({...approved,achievements:[{event:'Test event',placement:1.5}]}).success,false);
 });
 test('valid published fields override individually while malformed fields keep the original fallback',()=>{
   const result=resolveAcademyContent({homepage:{heroEyebrow:'Owner-approved heading',heroTitle:[],about:{title:'A new title',body:7}},branding:{tagline:''},photos:[{...fallbackContent.photos[2],url:'https://malicious.example/a.jpg'}]});
