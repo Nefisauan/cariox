@@ -4,6 +4,8 @@ Existing Next.js / React / TypeScript academy design, with account-independent C
 
 The original 3D/perspective interactions, photography, responsive CSS, and fallback content are preserved. The client subsequently authorized Vercel production deployment through `main`. Vercel Git deployments remain disabled only for the feature branch. No external accounts were created.
 
+The official green-and-gold logo supplied in the class schedule now replaces the prior text-only marks in the website UI, browser icons, share image, and concept mockups. See [brand assets and edit provenance](./docs/brand-update.md).
+
 Read the current engineering handoff first:
 
 - [CLIENT_HANDOFF.md](./CLIENT_HANDOFF.md) — implemented features, changed files, actual QA, demos, costs, and exact remaining steps.

@@ -4,7 +4,8 @@ import MarketingConsent from '../components/tracking/MarketingConsent';
 import { getAcademyContent } from '../lib/content/load';
 import { getPublicSiteUrl } from '../lib/config/site';
 
-const siteUrl = getPublicSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
+// This production origin was verified during the client-authorized Vercel release.
+const siteUrl = getPublicSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? new URL('https://cariox-smoky.vercel.app');
 
 const baseMetadata: Metadata = {
   metadataBase: siteUrl,
@@ -13,7 +14,7 @@ const baseMetadata: Metadata = {
   description: 'Brazilian roots. A way forward. Explore the CARIOX academy, the Salomão BJJ Team philosophy, and your first steps in Brazilian Jiu-Jitsu.',
   applicationName: 'CARIOX',
   openGraph: { title: 'CARIOX — A Way Forward', description: 'Discipline. Connection. Evolution. Brazilian martial arts with purpose.', type: 'website', locale: 'en_US', ...(siteUrl ? { url: siteUrl, images: [{ url: '/share-image', width: 1200, height: 630, alt: 'CARIOX — A Way Forward' }] } : {}) },
-  twitter: { card: 'summary_large_image', title: 'CARIOX — A Way Forward', description: 'Brazilian roots. A stronger tomorrow.' },
+  twitter: { card: 'summary_large_image', title: 'CARIOX — A Way Forward', description: 'Brazilian roots. A stronger tomorrow.', images: [{ url: '/share-image', alt: 'CARIOX Brazilian Martial Arts · Salomão BJJ Team' }] },
   // Preview stays out of search until verified business information is provided.
   robots: { index: false, follow: false },
 };

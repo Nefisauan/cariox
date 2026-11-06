@@ -12,11 +12,12 @@ for (const anchor of document.querySelectorAll('a[href^="#"]')) {
   assert.ok(document.getElementById(anchor.getAttribute('href').slice(1)), `Missing anchor target: ${anchor.getAttribute('href')}`);
 }
 for (const image of document.querySelectorAll('img')) {
-  assert.ok(image.getAttribute('alt'), 'Every editorial image needs a meaningful alt');
+  assert.ok(image.classList.contains('brand-logo') ? image.hasAttribute('alt') : image.getAttribute('alt'), 'Every editorial image needs a meaningful alt; decorative brand repeats need an explicit empty alt');
   const url = new URL(image.getAttribute('src'), 'https://cariox.example');
   const source = url.pathname === '/_next/image' ? url.searchParams.get('url') : url.pathname;
   assert.ok(source && fs.existsSync(`public${source}`), `Missing image file: ${source}`);
   assert.ok(!['/images/academy.jpg', '/images/performance.jpg'].includes(source), 'Annotated originals must not be shown');
+  assert.ok(!['/images/academy-clean.webp','/images/performance-clean.webp','/images/reception.jpg','/images/collection.jpg'].includes(source),'Prior-brand mockups must not be shown');
 }
 assert.ok(!document.head.innerHTML.includes('localhost'), 'Production metadata must not link to localhost');
 assert.ok(document.querySelector('meta[name="robots"]')?.content.includes('noindex'), 'Unverified preview must stay out of search');
@@ -24,6 +25,11 @@ const visibleText = document.body.cloneNode(true);
 visibleText.querySelectorAll('script,style').forEach(element => element.remove());
 assert.ok(!/[\p{Extended_Pictographic}]/u.test(visibleText.textContent.replace(/©/g,'')), 'Website copy must not contain emoji decorations');
 assert.equal(document.querySelectorAll('#instructors .competition-record li').length,10,'All ten supplied competition results must render in the fallback build');
+assert.ok(document.querySelector('.site-header .brand-logo'),'Header must use the official logo artwork');
+assert.ok(document.querySelector('.footer-top .brand-logo'),'Footer must use the official logo artwork');
+assert.equal(document.querySelectorAll('.wordmark').length,0,'Old text-only logos must not render');
+assert.ok(document.head.querySelector('link[rel="icon"][href^="/icon.png"]'),'Browser icon must use the official logo');
+assert.ok(document.head.querySelector('meta[property="og:image"]')?.content.endsWith('/share-image'),'Share metadata must point to the official-logo card');
 assert.equal(document.querySelectorAll('#schedule .class-row').length,43,'All 43 supplied weekly classes must render');
 assert.ok(!/sample|illustrative|preview/i.test(document.querySelector('#schedule').textContent),'Published schedule must not contain demo timetable copy');
 for (const id of ['wed-0930-am','wed-0400-pm']) assert.equal(document.querySelector(`[data-class-id="${id}"] .level-tag`).textContent,'Gi');

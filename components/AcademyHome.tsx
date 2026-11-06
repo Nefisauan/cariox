@@ -19,6 +19,7 @@ import { BusinessContact } from './content/BusinessContact';
 import MembershipPricing from './content/MembershipPricing';
 import InstructorSection from './content/InstructorSection';
 import ClassSchedule from './content/ClassSchedule';
+import BrandLogo from './BrandLogo';
 
 const Booking = dynamic(() => import('../components/Booking'), { ssr: false });
 
@@ -51,7 +52,7 @@ export default function Home() {
       </section>
       <div className="principles" aria-label="Our values"><span>BRAZILIAN SOUL.</span><span className="asterisk" aria-hidden="true"></span><span>UNIVERSAL LANGUAGE.</span><span className="asterisk" aria-hidden="true"></span><span>ONE TEAM.</span><span className="asterisk" aria-hidden="true"></span><span>CARIOX.</span></div>
 
-      <section id="about" className="about section-pad"><div className="section-kicker reveal"><span>01 / THE PHILOSOPHY</span><span>A PRACTICE. A PEOPLE. A PURPOSE.</span></div><div className="about-grid"><div className="reveal"><span className="eyebrow muted-text">{homepage.about.eyebrow}</span><ContentHeading title={homepage.about.title} accent={homepage.about.accent} prefix={homepage.about.accentPrefix} /><div className="about-copy"><span className="little-cross" aria-hidden="true"></span><div><p className="lead">{homepage.about.lead}</p><p>{homepage.about.body}</p><a className="underlined-link" href="#programs">Find your way onto the mat <ArrowUpRight size={17} /></a></div></div></div><DepthSurface className="about-image reveal"><Image src={photoPath(1)} alt={photos[1].alt} width={1448} height={1086} sizes="(max-width: 850px) 90vw, 44vw" /><span className="image-tag">{homepage.about.imageCaption}</span><div className="image-corner" aria-hidden="true">C<span></span></div></DepthSurface></div>
+      <section id="about" className="about section-pad"><div className="section-kicker reveal"><span>01 / THE PHILOSOPHY</span><span>A PRACTICE. A PEOPLE. A PURPOSE.</span></div><div className="about-grid"><div className="reveal"><span className="eyebrow muted-text">{homepage.about.eyebrow}</span><ContentHeading title={homepage.about.title} accent={homepage.about.accent} prefix={homepage.about.accentPrefix} /><div className="about-copy"><span className="little-cross" aria-hidden="true"></span><div><p className="lead">{homepage.about.lead}</p><p>{homepage.about.body}</p><a className="underlined-link" href="#programs">Find your way onto the mat <ArrowUpRight size={17} /></a></div></div></div><DepthSurface className="about-image reveal"><Image src={photoPath(1)} alt={photos[1].alt} width={1448} height={1086} sizes="(max-width: 850px) 90vw, 44vw" /><span className="image-tag">{homepage.about.imageCaption}</span><div className="image-corner" aria-hidden="true"><BrandLogo src={content.branding.logoUrl} decorative /></div></DepthSurface></div>
         <div className="philosophy-notes reveal">{[{ title: 'Show up with curiosity.', text: 'Leave room to learn something new.' }, { title: 'Grow with intention.', text: 'Give the small improvements your attention.' }, { title: 'Move forward together.', text: 'Respect the people who share your journey.' }].map((item, index) => <div key={item.title}><small>0{index + 1}</small><h3>{item.title}</h3><p>{item.text}</p></div>)}</div>
       </section>
 

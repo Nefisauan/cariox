@@ -456,3 +456,20 @@ dialog::backdrop{background:#0b170edb;backdrop-filter:blur(8px)}
 #schedule .level-tag{white-space:normal;text-align:center;max-width:190px}
 @media(max-width:1000px){.schedule-toolbar{flex-wrap:wrap;gap:14px}.schedule-toolbar .days{width:100%;justify-content:space-between;gap:0}.schedule-toolbar select{width:100%;min-height:46px;padding:12px}}
 @media(max-width:600px){.schedule-format-note{margin-top:0;padding-bottom:18px;margin-bottom:22px}.schedule-format-note p{font-size:11px}.schedule .days{gap:0}.schedule .days button{min-width:0;flex:1;padding-inline:4px}.schedule .class-row>.icon-button{display:grid;place-items:center}.schedule .level-tag{max-width:calc(100% - 101px)}}
+
+/* The client's official schedule artwork replaces all text-only brand marks. */
+.brand-logo{display:block;width:190px;height:auto;aspect-ratio:1280/517;object-fit:contain;font-style:normal}
+.footer-top>.logo{padding:12px 16px;background:var(--paper);border-radius:2px}
+.footer-top .brand-logo{width:200px}
+.image-corner{width:150px;height:85px;padding:12px;background:var(--paper)}
+.image-corner .brand-logo{width:100%}
+.chat-avatar{display:flex;align-items:center;flex-shrink:0;background:var(--paper);padding:7px 5px;border-radius:2px}
+.chat-avatar .brand-logo{width:64px}
+.instructor-brand{display:block;background:var(--paper);padding:6px 8px;border-radius:2px}
+.instructor-portrait figcaption .brand-logo{width:105px;height:auto;aspect-ratio:1280/517;object-fit:contain}
+.recovery-brand{background:var(--paper);padding:12px 18px;border-radius:2px}
+.recovery-brand .brand-logo{width:220px}
+@media(max-width:1100px){.site-header .brand-logo{width:170px}}
+@media(max-width:850px){.site-header .brand-logo{width:150px}.mobile-nav-top .brand-logo{width:180px}}
+@media(max-width:600px){.site-header .brand-logo{width:132px}.image-corner{width:115px;height:65px;padding:10px}.footer-top .brand-logo{width:180px}.recovery-brand .brand-logo{width:190px}}
+@media(max-width:360px){.site-header .brand-logo{width:114px}}

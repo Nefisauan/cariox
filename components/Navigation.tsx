@@ -1,15 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
-import Image from 'next/image';
+import BrandLogo from './BrandLogo';
 import { useAcademyContent } from './content/ContentProvider';
 import useModal from './useModal';
 
 const links = ['About', 'Programs', 'Instructors', 'Schedule', 'Gallery', 'Contact'];
 export function Wordmark() {
   const { branding } = useAcademyContent();
-  if (branding.logoUrl) return <Image src={branding.logoUrl} alt={`${branding.wordmarkLeft}${branding.wordmarkRight}`} width={150} height={50} style={{objectFit:"contain"}} />;
-  return <span className="wordmark">{branding.wordmarkLeft}<span>{branding.wordmarkRight}</span><small>{branding.tagline}</small></span>;
+  return <BrandLogo src={branding.logoUrl} />;
 }
 function MobileMenu({ close, book }: { close: () => void; book: () => void }) {
   const ref = useModal();

@@ -5,6 +5,7 @@ import { ArrowUpRight } from 'lucide-react';
 import DepthSurface from '../DepthSurface';
 import { useAcademyContent } from './ContentProvider';
 import { ContentHeading } from './ContentHeading';
+import BrandLogo from '../BrandLogo';
 
 const placements = { 1: '1st', 2: '2nd', 3: '3rd' } as const;
 
@@ -16,7 +17,7 @@ export default function InstructorSection() {
       <DepthSurface className="instructor-portrait reveal" strength={5}>
         <figure>
           <Image src={person.photoUrl} alt={person.photoAlt} width={1320} height={1615} sizes="(max-width: 600px) 90vw, 44vw" />
-          <figcaption><span>{branding.wordmarkLeft}{branding.wordmarkRight}</span><span>{branding.affiliation}</span></figcaption>
+          <figcaption><span className="instructor-brand"><BrandLogo src={branding.logoUrl} decorative /></span><span>{branding.affiliation}</span></figcaption>
         </figure>
       </DepthSurface>
       <div className="instructor-details reveal">

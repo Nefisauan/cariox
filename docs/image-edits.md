@@ -1,3 +1,5 @@
+> Update: the client subsequently supplied the official schedule logo. The visible academy/performance/reception/collection mockups now use the branded derivatives documented in [brand-update.md](./brand-update.md). The earlier source and clean files below are retained for provenance.
+
 # Dimension-free academy images
 
 Edited with the built-in imagegen tool. Original uploaded JPEGs remain unchanged. The two final website assets were visually inspected and converted to WebP at quality 88 for delivery.

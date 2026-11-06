@@ -1,5 +1,6 @@
 import type { AcademyContent } from './types';
 import { publishedSchedule } from './schedule';
+import { OFFICIAL_LOGO_URL } from '../branding';
 export const fallbackContent: AcademyContent = {
   source: 'fallback', faqsConfirmed: false, programsConfirmed: true, scheduleConfirmed: true,
   homepage: {
@@ -11,13 +12,13 @@ export const fallbackContent: AcademyContent = {
     contact: { eyebrow: 'THERE’S A PLACE FOR YOUR QUESTIONS', title: 'Your next chapter.', accent: 'Starts here.', body: 'A question, a goal, a little curiosity. Tell us what you’re looking for, or explore what your first visit could look like.' },
     seo: { title: 'CARIOX | Brazilian Jiu-Jitsu & Martial Arts', description: 'Brazilian roots. A way forward. Explore the CARIOX academy, the Salomão BJJ Team philosophy, and your first steps in Brazilian Jiu-Jitsu.' },
   },
-  branding: { wordmarkLeft: 'CARI', wordmarkRight: 'OX', tagline: 'BRAZILIAN MARTIAL ARTS', affiliation: 'SALOMÃO BJJ TEAM' },
+  branding: { wordmarkLeft: 'CARI', wordmarkRight: 'OX', tagline: 'BRAZILIAN MARTIAL ARTS', affiliation: 'SALOMÃO BJJ TEAM', logoUrl: OFFICIAL_LOGO_URL },
   photos: [
-    { key:'academy', url:'/images/academy-clean.webp', title:'Space to become more.', label:'01 / THE TRAINING FLOOR', description:'An open mat. An open mind. A space designed around the work.', alt:'CARIOX academy concept with open mats, Brazilian wall graphics, and warm architectural lighting', tab:'The mat' },
-    { key:'reception', url:'/images/reception.jpg', title:'A different kind of welcome.', label:'02 / THE WELCOME', description:'Warm materials, thoughtful details, and Brazilian identity from the moment you arrive.', alt:'CARIOX welcome desk with natural wood, plants, and branded apparel', tab:'The welcome' },
-    { key:'performance', url:'/images/performance-clean.webp', title:'Beyond the technique.', label:'03 / PERFORMANCE & RECOVERY', description:'Explore the performance and recovery area in the supplied academy concept.', alt:'CARIOX performance area with training equipment, cold plunge, and octagonal cage', tab:'Performance' },
+    { key:'academy', url:'/images/academy-branded.webp', title:'Space to become more.', label:'01 / THE TRAINING FLOOR', description:'An open mat. An open mind. A space designed around the work.', alt:'CARIOX academy concept with open mats, Brazilian wall graphics, and warm architectural lighting', tab:'The mat' },
+    { key:'reception', url:'/images/reception-branded.webp', title:'A different kind of welcome.', label:'02 / THE WELCOME', description:'Warm materials, thoughtful details, and Brazilian identity from the moment you arrive.', alt:'CARIOX welcome desk with natural wood, plants, and branded apparel', tab:'The welcome' },
+    { key:'performance', url:'/images/performance-branded.webp', title:'Beyond the technique.', label:'03 / PERFORMANCE & RECOVERY', description:'Explore the performance and recovery area in the supplied academy concept.', alt:'CARIOX performance area with training equipment, cold plunge, and octagonal cage', tab:'Performance' },
     { key:'lounge', url:'/images/lounge.jpg', title:'Stay a little longer.', label:'04 / THE COMMUNITY', description:'Connection continues beyond the mat in a welcoming lounge.', alt:'A warm welcome in the CARIOX lounge', tab:'The lounge' },
-    { key:'collection', url:'/images/collection.jpg', title:'Carry the culture.', label:'05 / THE CARIOX COLLECTION', description:'Brazilian roots. A distinctive identity. Explore the supplied apparel concept; availability is not yet announced.', alt:'CARIOX black and gold Brazilian martial arts apparel concept', tab:'The collection' },
+    { key:'collection', url:'/images/collection-branded.webp', title:'Carry the culture.', label:'05 / THE CARIOX COLLECTION', description:'Brazilian roots. A distinctive identity. Explore the supplied apparel concept; availability is not yet announced.', alt:'CARIOX black and gold Brazilian martial arts apparel concept', tab:'The collection' },
   ],
   programs: [
     {title:'The first step',tag:'NEW TO JIU-JITSU',body:'Explore Gi and No-Gi Jiu-Jitsu on the weekly schedule. Share your experience and goals with the team to find a suitable starting point before attending.'},
