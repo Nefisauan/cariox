@@ -28,7 +28,7 @@ export default function GalleryShowcase({ open }: { open: (index: number) => voi
     <DepthSurface className="showcase-depth" enabled={depth} strength={4}>
       <div className="showcase-planes" aria-label="Academy photographs">
         {photos.map((photo, index) => <div key={photo.src} className={`showcase-image ${active === index ? 'active' : ''}`} aria-hidden={active !== index}>
-          <Image src={photoPath(index)} fill sizes="100vw" loading="eager" alt={photo.description} unoptimized={raw[index]}
+          <Image src={photoPath(index)} fill sizes="100vw" loading="lazy" alt={photo.description} unoptimized={raw[index]}
             onLoad={() => setLoaded(previous => previous.map((ready, i) => i === index ? true : ready))}
             onError={() => {
               if (!raw[index]) setRaw(previous => previous.map((retry, i) => i === index ? true : retry));

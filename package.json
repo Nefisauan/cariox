@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-test-module-mocks --import tsx --test tests/*.test.ts tests/*.test.tsx"
+    "test": "node --experimental-test-module-mocks --import tsx --test tests/*.test.ts tests/*.test.tsx",
+    "audit:production": "node scripts/audit-production.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -21,6 +22,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "axe-core": "^4.14.0",
     "jsdom": "^29.1.1",
     "tsx": "^4.23.15",
     "typescript": "^5.7.0"

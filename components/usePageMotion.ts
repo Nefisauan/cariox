@@ -43,9 +43,22 @@ export default function usePageMotion() {
         target.style.setProperty('--py', `${y * 100}%`);
       });
     };
+    const progress = document.querySelector<HTMLElement>('.reading-progress');
+    let scrollFrame: number | null = null;
+    const updateProgress = () => {
+      if (scrollFrame !== null) return;
+      scrollFrame = requestAnimationFrame(() => {
+        const distance = document.documentElement.scrollHeight - window.innerHeight;
+        progress?.style.setProperty('--progress', String(distance > 0 ? Math.max(0, Math.min(1, window.scrollY / distance)) : 0));
+        scrollFrame = null;
+      });
+    };
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
     document.addEventListener('pointermove', move, { passive: true });
     document.addEventListener('pointerleave', reset);
     window.addEventListener('blur', reset);
-    return () => { observer?.disconnect(); reset(); document.removeEventListener('pointermove', move); document.removeEventListener('pointerleave', reset); window.removeEventListener('blur', reset); };
+    return () => { observer?.disconnect(); reset(); window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress); if (scrollFrame !== null) cancelAnimationFrame(scrollFrame); document.removeEventListener('pointermove', move); document.removeEventListener('pointerleave', reset); window.removeEventListener('blur', reset); };
   }, []);
 }
