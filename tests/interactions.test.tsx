@@ -21,6 +21,7 @@ const { render, fireEvent, cleanup, waitFor } = await import('@testing-library/r
 // Next's image component is supplied by its compiler in production.
 // Use a normal image in DOM tests to control network load/error events.
 mock.module('next/image', { defaultExport: ({fill, sizes, loading, unoptimized, ...props}: Record<string, unknown>) => React.createElement('img', props) });
+const { default: DepthSurface } = await import('../components/DepthSurface');
 const { default: ProgramExplorer } = await import('../components/ProgramExplorer');
 const { default: GalleryShowcase } = await import('../components/GalleryShowcase');
 const { default: BookingDialog } = await import('../components/Booking');
@@ -178,4 +179,33 @@ test('receptionist does not steal initial focus and supports Escape and booking 
   assert.equal(booked, true);
   assert.equal(view.queryByRole('log'), null);
   trigger.remove();
+});
+
+
+test('photographic depth responds to a mouse and respects touch/reduced-motion fallbacks', async () => {
+  class UnitPointerEvent extends dom.window.MouseEvent { pointerType: string; constructor(type: string, init: MouseEventInit & {pointerType?:string} = {}) { super(type,init); this.pointerType=init.pointerType||'mouse'; } }
+  Object.defineProperty(window,'PointerEvent',{value:UnitPointerEvent,configurable:true});
+  const view=render(<DepthSurface><span>Unit photograph</span></DepthSurface>);
+  const surface=view.container.firstElementChild as HTMLDivElement;
+  surface.getBoundingClientRect=()=>({x:0,y:0,left:0,top:0,right:200,bottom:100,width:200,height:100,toJSON(){}});
+  fireEvent.pointerMove(surface,{clientX:100,clientY:25,pointerType:'mouse'});
+  await waitFor(()=>assert.equal(surface.style.getPropertyValue('--rx'),'1.5deg'));
+  fireEvent.pointerLeave(surface);assert.equal(surface.style.getPropertyValue('--rx'),'0deg');
+  fireEvent.pointerMove(surface,{clientX:100,clientY:25,pointerType:'touch'});assert.equal(surface.style.getPropertyValue('--rx'),'0deg');
+  const originalMatchMedia=window.matchMedia;window.matchMedia=()=>({matches:true}) as MediaQueryList;
+  fireEvent.pointerMove(surface,{clientX:100,clientY:25,pointerType:'mouse'});assert.equal(surface.style.getPropertyValue('--rx'),'0deg');
+  window.matchMedia=originalMatchMedia;
+});
+
+
+test('a raw Cloudflare image failure stops loading immediately without losing the current view', async () => {
+  const view=render(<GalleryShowcase open={()=>{}} />);
+  const original=view.container.querySelector('.showcase-image.active');
+  fireEvent.click(view.getByRole('button',{name:/03Performance/}));
+  fireEvent.error(view.container.querySelectorAll('img')[2]);
+  await waitFor(()=>assert.ok(view.getByRole('alert')));
+  assert.equal(view.queryByRole('status'),null);
+  assert.equal(view.container.querySelector('.showcase-image.active'),original);
+  fireEvent.click(view.getByRole('button',{name:/03Performance/}));
+  assert.equal(view.queryByRole('status'),null);
 });

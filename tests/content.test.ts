@@ -1,0 +1,56 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { fallbackContent } from '../lib/content/fallback';
+import { resolveAcademyContent } from '../lib/content/resolve';
+import { getSanityEnvironment } from '../lib/sanity/env';
+import { photoSchema, homepageSchema, scheduleSchema } from '../lib/content/types';
+import { schemaTypes } from '../sanity/schemaTypes';
+import { loadPublishedContent } from '../lib/content/load-published';
+import { ACADEMY_QUERY } from '../lib/sanity/queries';
+import { getPublicSiteUrl } from '../lib/config/site';
+import { parse } from 'groq-js';
+import { Schema } from '@sanity/schema';
+
+test('all required CMS schema types compile without an account',()=>{
+  const names: string[]=schemaTypes.map(type=>type.name);
+  for(const name of ['homepage','branding','academyPhoto','program','classDefinition','instructor','schedule','membershipPrice','businessInformation','announcement','faq'])assert.ok(names.includes(name));
+  const schema=Schema.compile({name:'offline-schema-test',types:schemaTypes});
+  for(const name of names)assert.ok(schema.get(name));
+});
+test('no Sanity configuration returns no client configuration; blank or incomplete values are safe',()=>{
+  assert.equal(getSanityEnvironment({}),null);
+  assert.equal(getSanityEnvironment({SANITY_STUDIO_PROJECT_ID:'unitfixture',SANITY_STUDIO_DATASET:'unitfixture'}),null);
+  assert.equal(getSanityEnvironment({NEXT_PUBLIC_SANITY_PROJECT_ID:'',NEXT_PUBLIC_SANITY_DATASET:'production'}),null);
+  assert.equal(getSanityEnvironment({NEXT_PUBLIC_SANITY_PROJECT_ID:'invalid/id',NEXT_PUBLIC_SANITY_DATASET:'production'}),null);
+});
+test('missing or empty CMS content retains existing content and photograph slots',()=>{
+  assert.equal(resolveAcademyContent(null),fallbackContent);
+  const resolved=resolveAcademyContent({});
+  assert.deepEqual(resolved.homepage,fallbackContent.homepage);
+  assert.deepEqual(resolved.photos,fallbackContent.photos);
+  assert.deepEqual(resolved.programs,fallbackContent.programs);
+  assert.equal(resolved.programsConfirmed,false);assert.equal(resolved.scheduleConfirmed,false);
+  assert.ok(homepageSchema.safeParse(fallbackContent.homepage).success);
+});
+test('valid published fields override individually while malformed fields keep the original fallback',()=>{
+  const result=resolveAcademyContent({homepage:{heroEyebrow:'Owner-approved heading',heroTitle:[],about:{title:'A new title',body:7}},branding:{tagline:''},photos:[{...fallbackContent.photos[2],url:'https://malicious.example/a.jpg'}]});
+  assert.equal(result.homepage.heroEyebrow,'Owner-approved heading');
+  assert.deepEqual(result.homepage.heroTitle,fallbackContent.homepage.heroTitle);
+  assert.equal(result.homepage.about.title,'A new title');assert.equal(result.homepage.about.body,fallbackContent.homepage.about.body);
+  assert.deepEqual(result.photos,fallbackContent.photos);assert.deepEqual(result.branding,fallbackContent.branding);
+});
+test('Sanity images are allowlisted and expired/future promotions never render',()=>{
+  assert.equal(photoSchema.safeParse({...fallbackContent.photos[0],url:'javascript:alert(1)'}).success,false);
+  assert.equal(photoSchema.safeParse({...fallbackContent.photos[0],url:'/images/../../secret'}).success,false);
+  const base={id:'unit-announcement',title:'Unit fixture',body:'Test only; not business copy.'};
+  const result=resolveAcademyContent({announcements:[{...base,startsAt:'2099-01-01T00:00:00Z'},{...base,endsAt:'2000-01-01T00:00:00Z'},{...base,id:'unit-active'}]},new Date('2026-11-06T12:00:00Z'));
+  assert.equal(result.announcements.length,1);assert.equal(result.announcements[0].id,'unit-active');
+});
+test('schedule rejects an unknown timezone rather than guessing the academy location',()=>{
+  assert.equal(scheduleSchema.safeParse({id:'test-only',day:'Mon',time:'09:00',period:'AM',name:'Fixture',type:'Fixture',level:'Fixture',timezone:'Unknown/TimeZone'}).success,false);
+});
+
+test('published GROQ query parses offline',()=>{assert.ok(parse(ACADEMY_QUERY));});
+test('unconfigured loader makes no request and CMS outages retain existing content',async()=>{let requests=0;const read=async()=>{requests++;throw new Error('Synthetic offline failure');};assert.equal(await loadPublishedContent(null,read),fallbackContent);assert.equal(requests,0);assert.equal(await loadPublishedContent({projectId:'unitfixture',dataset:'unitfixture',apiVersion:'2026-11-06'},read),fallbackContent);assert.equal(requests,1);});
+
+test('invalid or credential-bearing public URLs cannot break metadata or leak into canonical links',()=>{assert.equal(getPublicSiteUrl('https://invalid::'),undefined);assert.equal(getPublicSiteUrl('https://user:password@unit.example/'),undefined);assert.equal(getPublicSiteUrl('https://unit.example/?private=value'),undefined);assert.equal(getPublicSiteUrl('https://unit.example/')?.origin,'https://unit.example');});

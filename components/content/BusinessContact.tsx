@@ -1,0 +1,5 @@
+import { ArrowUpRight } from 'lucide-react';
+import type { BusinessInformation } from '../../lib/content/types';
+export function BusinessContact({ business }: { business: BusinessInformation | null }) {
+  return <div className="contact-details"><b>COME FIND YOUR PEOPLE.</b>{business ? <><p>{business.name}</p>{business.address && <p>{business.address}</p>}{business.phone && <p><a href={`tel:${business.phone.replace(/[^+\d]/g, '')}`}>{business.phone}</a></p>}{business.email && <p><a href={`mailto:${business.email}`}>{business.email}</a></p>}{business.hours && <p>{business.hours}</p>}{business.mapUrl && <a href={business.mapUrl} target="_blank" rel="noopener noreferrer">Get directions <ArrowUpRight size={15} /></a>}{business.socialLinks.map(link => <p key={link.url}><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a></p>)}</> : <p>The academy’s address, phone, email, and social channels will appear here once confirmed.</p>}<a href="#first-visit">First-visit questions, answered <ArrowUpRight size={15} /></a></div>;
+}

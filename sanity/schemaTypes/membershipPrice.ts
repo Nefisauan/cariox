@@ -1,0 +1,3 @@
+import { defineType, defineField } from 'sanity';
+import { requiredText, confirmationFields } from './shared';
+export const membershipPrice = defineType({name:'membershipPrice',title:'Membership pricing',type:'document',fields:[requiredText('title','Membership name'),requiredText('description','Description / terms','text'),defineField({name:'amount',title:'Price in major currency units',type:'number',validation:rule=>rule.required().min(0)}),defineField({name:'currency',title:'ISO currency code',type:'string',validation:rule=>rule.required().regex(/^[A-Z]{3}$/)}),defineField({name:'interval',title:'Billing interval',type:'string',options:{list:['month','year','session','one-time']},validation:rule=>rule.required()}),...confirmationFields]});

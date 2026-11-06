@@ -1,0 +1,34 @@
+import type { AcademyContent } from './types';
+export const fallbackContent: AcademyContent = {
+  source: 'fallback', faqsConfirmed: false, programsConfirmed: false, scheduleConfirmed: false,
+  homepage: {
+    heroEyebrow: 'BRAZILIAN JIU-JITSU · SALOMÃO BJJ TEAM', heroTitle: ['MORE THAN', 'A MARTIAL ART.', 'A WAY FORWARD.'], heroDescription: 'Find your strength. Build your confidence.\nBecome more, on and off the mat.', primaryCta: 'Plan your first visit', secondaryCta: 'Explore the academy',
+    about: { eyebrow: 'ROOTED IN SOMETHING REAL', title: 'Leave your ego.', accent: 'everything.', accentPrefix: 'Bring your', lead: 'Jiu-Jitsu begins with a simple decision: to show up. To be a beginner. To discover what you’re capable of.', body: 'CARIOX brings Brazilian martial arts into a space made for connection. Rooted in the Salomão BJJ Team identity, our vision is built around respect, intentional practice, and the belief that we grow together.', imageCaption: 'BRAZILIAN IN SPIRIT. CARIOX BY NATURE.' },
+    programs: { title: 'Different paths.', accent: 'One pursuit.', description: 'Finding your feet or finding your edge?\nStart with what moves you.' },
+    team: { title: 'Good technique.', accent: 'Great people.', body: 'Behind every meaningful practice is a human connection. Meet the people who will guide the next chapter of CARIOX.' },
+    culture: { eyebrow: 'MORE THAN A PLACE TO TRAIN.', title: 'A place to', accent: 'belong.', body: 'The small conversations. The shared progress.\nThe people who keep you coming back.\nThat’s the culture we’re building.', quote: 'Progress is personal.\nThe journey is shared.' },
+    contact: { eyebrow: 'THERE’S A PLACE FOR YOUR QUESTIONS', title: 'Your next chapter.', accent: 'Starts here.', body: 'A question, a goal, a little curiosity. Tell us what you’re looking for, or explore what your first visit could look like.' },
+    seo: { title: 'CARIOX | Brazilian Jiu-Jitsu & Martial Arts', description: 'Brazilian roots. A way forward. Explore the CARIOX academy, the Salomão BJJ Team philosophy, and your first steps in Brazilian Jiu-Jitsu.' },
+  },
+  branding: { wordmarkLeft: 'CARI', wordmarkRight: 'OX', tagline: 'BRAZILIAN MARTIAL ARTS', affiliation: 'SALOMÃO BJJ TEAM' },
+  photos: [
+    { key:'academy', url:'/images/academy-clean.webp', title:'Space to become more.', label:'01 / THE TRAINING FLOOR', description:'An open mat. An open mind. A space designed around the work.', alt:'CARIOX academy concept with open mats, Brazilian wall graphics, and warm architectural lighting', tab:'The mat' },
+    { key:'reception', url:'/images/reception.jpg', title:'A different kind of welcome.', label:'02 / THE WELCOME', description:'Warm materials, thoughtful details, and Brazilian identity from the moment you arrive.', alt:'CARIOX welcome desk with natural wood, plants, and branded apparel', tab:'The welcome' },
+    { key:'performance', url:'/images/performance-clean.webp', title:'Beyond the technique.', label:'03 / PERFORMANCE & RECOVERY', description:'Explore the performance and recovery area in the supplied academy concept.', alt:'CARIOX performance area with training equipment, cold plunge, and octagonal cage', tab:'Performance' },
+    { key:'lounge', url:'/images/lounge.jpg', title:'Stay a little longer.', label:'04 / THE COMMUNITY', description:'Connection continues beyond the mat in a welcoming lounge.', alt:'A warm welcome in the CARIOX lounge', tab:'The lounge' },
+    { key:'collection', url:'/images/collection.jpg', title:'Carry the culture.', label:'05 / THE CARIOX COLLECTION', description:'Brazilian roots. A distinctive identity. Explore the supplied apparel concept; availability is not yet announced.', alt:'CARIOX black and gold Brazilian martial arts apparel concept', tab:'The collection' },
+  ],
+  programs: [
+    {title:'The first step',tag:'NEW TO JIU-JITSU',body:'Curious about Brazilian Jiu-Jitsu? Tell us what brings you to the mat. The academy can help determine the right starting point once its program information is confirmed.'},
+    {title:'The next generation',tag:'PARENTS & FAMILIES',body:'Explore an interest in training for your child. Age groups, children’s programs, and enrollment requirements will be published after confirmation.'},
+    {title:'The deeper practice',tag:'EXPERIENCED PRACTITIONERS',body:'Interested in advancing your practice, No-Gi, or private instruction? Share your goals through the inquiry form. Offered formats and coaching details are awaiting confirmation.'},
+  ],
+  faqs: [
+    {question:'Do I need experience to explore Jiu-Jitsu?',answer:'No prior knowledge is needed to learn about the practice. If you’re new, share that with the academy so the team can confirm a suitable introduction before you attend.'},
+    {question:'What should I bring for a first visit?',answer:'As a general starting point, bring water and comfortable training clothes. Ask the academy to confirm its uniform, equipment, and hygiene requirements before joining a class.'},
+    {question:'Can I ask about training for my child?',answer:'Absolutely. Use the inquiry form to share your child’s age and your questions. Children’s programs, age groups, and enrollment requirements still need academy confirmation.'},
+    {question:'Where can I find pricing and the real schedule?',answer:'Confirmed pricing, operating hours, and class times have not yet been supplied. The schedule and calendar on this preview use sample information and should not be used to plan an actual class.'},
+    {question:'Does booking here reserve a real class?',answer:'This is a booking preview. You can try selecting a date, time, and session, but no reservation, email, or calendar event is created. A real booking will be available once the academy connects its scheduling service.'},
+  ],
+  instructors: [], schedules: [], prices: [], business: null, announcements: [],
+};

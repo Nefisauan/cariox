@@ -1,33 +1,43 @@
 # CARIOX — Brazilian Martial Arts
 
-A responsive Next.js / React / TypeScript academy website built directly in this repository. Uses the five supplied CARIOX images, charcoal, ivory, and gold branding, cursor-responsive 3D photographic tilt, layered lighting, raised interactive buttons, a CSS belt composition, reduced-motion support, an interactive gallery, expandable training interests, sample schedule filters, a booking dialog, and a scripted receptionist.
+Existing Next.js / React / TypeScript academy design, with account-independent Cloudflare, Sanity CMS, and Meta tracking readiness on `codex/cloudflare-cms-meta-readiness`.
 
-## Commands
+The original 3D/perspective interactions, photography, responsive CSS, and fallback content are preserved. No production deployment or account creation is included in this branch. Vercel Git deployments are disabled only for this feature branch.
 
-- `npm ci` installs locked dependencies.
-- `npm run build` creates the production application.
-- `npm run typecheck` checks TypeScript.
-- `npm run audit:production` checks the built page’s anchor targets, image assets, preview metadata, and WCAG structural accessibility with axe-core. Run after building.
-- `npm test` checks booking validation, honest demo receipts, receptionist content boundaries, repeated 1–2–3 panel interactions, gallery loading/error transitions, and depth controls in a DOM environment without a server.
+Read the current engineering handoff first:
 
-No preview server is required for these checks. No localhost server is used. Deploy the GitHub repository with a Next.js-compatible host using `npm run build`. Node 22.18+ recommended; DOM tests run through tsx and use Node’s experimental module-mocking feature for the Next.js image wrapper. No secrets are required for the demo.
+- [CLIENT_HANDOFF.md](./CLIENT_HANDOFF.md) — implemented features, changed files, actual QA, demos, costs, and exact remaining steps.
+- [CLOUDFLARE_SETUP.md](./CLOUDFLARE_SETUP.md) — OpenNext/Workers build and non-deploying checks; future owner-authorized setup.
+- [SANITY_SETUP.md](./SANITY_SETUP.md) — schemas, typed content, fallbacks, Studio preflight, and real-project connection.
+- [META_TRACKING_SETUP.md](./META_TRACKING_SETUP.md) — consent, event semantics, verification/deduplication, optional CAPI, and Events Manager testing.
+- [.env.example](./.env.example) — blank owner identifiers/secrets; tracking disabled by default.
 
-## Content and integration status
+## Account-free commands
 
-Uploaded images are presented as supplied academy/apparel concept references. Dimension text and arrows were removed from the training-floor and performance images with the built-in image editing tool, then optimized to WebP. Original uploads remain archived in `public/images`; all visible placements use the cleaned versions. See `docs/image-edits.md` for asset paths and prompts. No testimonials, instructors, ranks, addresses, business hours, pricing, or offered programs have been invented. Program sections collect interests; actual offerings require confirmation. Sample classes are labeled. Contact details and coach profiles await verified content. SEO indexing is intentionally disabled in `app/layout.tsx` until business information is ready.
+Use Node 24 (`nvm use`), then `npm ci`.
 
-`lib/academy.ts` defines `SchedulingProvider`. Replace the demo with server-mediated availability and reservation calls to Cal.com, Calendly, Google Calendar, or another provider. Live booking must validate dates and contact details server-side, recheck availability, use provider idempotency and atomic reservation controls, and handle conflicts and provider failures. Current submission is browser-memory-only and returns `live: false`; it never sends email or makes a calendar event.
+```sh
+npm run typecheck
+npm test
+npm run build
+npm run audit:production
+npm run audit:design
+npm run cf:build
+npm run cf:check
+npm run cf:types
+npm audit
+```
 
-The receptionist uses an explicit scripted demo responder. To connect an LLM, add a server-only endpoint with a curated, verified academy knowledge base, rate limiting and input validation; stream its response to the chat UI. Keep provider keys server-side. Its booking action already opens the same booking flow.
+No localhost server is required or started by these commands. `cf:check` uses Wrangler's dry-run bundler and does not upload. Studio build/type generation needs the owner's actual Studio project ID and dataset; `studio:build` intentionally stops when they are absent.
 
-The inquiry form prepares a copyable draft in page memory; connect a validated server-side mail/CRM route before renaming the submit action. It retains details only in page memory and does not send them or persist them to storage. See `.env.example` for private integration configuration. Replace unconfirmed details and enable indexing only after review. Fonts are self-hosted as WOFF2, with open licenses in `docs/licenses`; supplied images use Next.js image optimization.
+## Content and integration boundaries
 
-## Interaction fixes
+The server fetches published Sanity content only when both public project settings exist; otherwise the current checked-in content is used without a CMS request. Missing/invalid/offline content retains fallbacks. Program offers, instructors, schedules, pricing, business information, and promotions require approved published data. The supplied concept imagery and original dimension-free edits remain; see [image edit details](./docs/image-edits.md).
 
-Scroll reveals use the Web Animations API, with content visible by default. Opening a program row no longer overwrites a visibility class and hides the panel. Photo switching retains the current image until the next image loads, retries image-optimizer failures using the original asset URL, and shows a readable error if both attempts fail. The full-screen photo viewer supports zoom, previous/next buttons, arrow keys, native dialog focus trapping, and returning focus to its trigger. CSS perspective layers provide photographic depth without claiming a reconstructed 3D room. Touch devices retain tap and carousel controls, and reduced-motion preferences disable tilt and motion.
+Booking is a browser-memory demo. Inquiries are local drafts, and chat replies are scripted. New live API contracts are disconnected and return 503, never false success. No demo action sends a Lead or CompleteRegistration event. Marketing tracking requires a real configured Pixel and explicit consent; optional CAPI has no active call site. There are no client-side API secrets.
 
-## Client review
+Search indexing stays disabled while business details/live services are unverified. Set `NEXT_PUBLIC_SITE_URL` to a confirmed HTTPS origin before a future release. Fonts are locally served WOFF2 files with open licenses in `docs/licenses/`. Production dependencies contain only application runtime packages; Studio/OpenNext tooling remains in development dependencies. Pinned transitive security overrides are recorded in `package.json` and must be retested when upgrading.
 
-The final review and remaining launch dependencies are recorded in `docs/client-handoff.md`. The site now includes a first-visit guide, keyboard-accessible FAQs, a native-dialog mobile menu, a persistent mobile visit action, local fonts, favicon, and a branded `/share-image` route. Set `NEXT_PUBLIC_SITE_URL` to the confirmed HTTPS deployment origin before building to enable canonical and social-image URLs. Indexing stays disabled while business information and live integrations remain unconfirmed.
+Earlier visual-review notes remain in `docs/client-handoff.md` as a historical record. They are superseded for this readiness branch by the root `CLIENT_HANDOFF.md`.
 
-`node scripts/prepare-visual-review.mjs` can prepare an offline snapshot of the production output. This does not run a server and does not substitute for live browser QA. The browser available in this session refuses file URLs, so no browser layout or cross-device visual pass has been claimed.
+Node 24 was used for verification via the npm-provided runtime on this machine. If NVM is not installed, use an existing supported Node 24 installation, or prefix a command with `npm exec --yes --package=node@24 --` (for example, `npm exec --yes --package=node@24 -- npm test`). No system runtime was replaced.

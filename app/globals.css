@@ -413,3 +413,9 @@ dialog::backdrop{background:#0b170edb;backdrop-filter:blur(8px)}
 .recovery-link{display:flex;gap:15px;align-items:center;font-size:12px;min-height:44px}
 .recovery-content>small{display:block;font-size:9px;letter-spacing:1.5px;margin-top:80px;color:#c7d5bb}
 @media(max-width:650px){.recovery-content{padding-top:30px;padding-bottom:40px}.recovery-brand{margin-bottom:65px}.recovery-content h1{font-size:16vw}.recovery-content>p{font-size:13px}.recovery-content>small{margin-top:60px}.recovery-content>.eyebrow{font-size:8px}}
+
+/* Only rendered after the owner explicitly enables marketing; default visuals unchanged. */
+.marketing-consent{position:fixed;z-index:60;left:20px;right:20px;bottom:20px;background:var(--paper);color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 40px #0003;padding:22px;display:flex;gap:25px;align-items:center;max-width:1100px;margin:auto}
+.marketing-consent b{font-size:14px}.marketing-consent p{font-size:12px;max-width:650px;margin-top:8px}.marketing-consent>div:last-child{display:flex;gap:12px;flex-shrink:0}.marketing-consent .button{padding:14px 18px;font-size:12px;min-height:46px}.privacy-choices{position:fixed;bottom:12px;left:16px;z-index:38;font-size:11px;background:var(--paper);border:1px solid var(--line);padding:10px}
+@media(max-width:850px){.marketing-consent{display:block}.marketing-consent>div:last-child{margin-top:18px;flex-wrap:wrap}}
+@media(max-width:650px){.marketing-consent{bottom:calc(85px + env(safe-area-inset-bottom));left:12px;right:12px;padding:18px;max-height:65dvh;overflow:auto}.privacy-choices{bottom:calc(85px + env(safe-area-inset-bottom))}}

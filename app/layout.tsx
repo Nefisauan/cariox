@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import MarketingConsent from '../components/tracking/MarketingConsent';
+import { getAcademyContent } from '../lib/content/load';
+import { getPublicSiteUrl } from '../lib/config/site';
 
-const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL;
-const siteUrl = configuredUrl && /^https:\/\/[^\s]+$/.test(configuredUrl) ? new URL(configuredUrl) : undefined;
+const siteUrl = getPublicSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   metadataBase: siteUrl,
   alternates: siteUrl ? { canonical: '/' } : undefined,
   title: 'CARIOX | Brazilian Jiu-Jitsu & Martial Arts',
@@ -15,7 +17,11 @@ export const metadata: Metadata = {
   // Preview stays out of search until verified business information is provided.
   robots: { index: false, follow: false },
 };
+export async function generateMetadata(): Promise<Metadata> {
+  const { homepage, source } = await getAcademyContent();
+  return { ...baseMetadata, title: homepage.seo.title, description: homepage.seo.description, ...(source === 'sanity' ? { openGraph: { ...baseMetadata.openGraph, title: homepage.seo.title, description: homepage.seo.description }, twitter: { ...baseMetadata.twitter, title: homepage.seo.title, description: homepage.seo.description } } : {}) };
+}
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#1c3025', colorScheme: 'light' };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><head><link rel="preload" href="/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /><link rel="preload" href="/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /></head><body>{children}</body></html>;
+  return <html lang="en"><head><link rel="preload" href="/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /><link rel="preload" href="/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /></head><body>{children}<MarketingConsent /></body></html>;
 }

@@ -1,0 +1,10 @@
+import { homepage } from './homepage';
+import { branding, academyPhoto } from './branding';
+import { program, classDefinition } from './programs';
+import { instructor } from './instructor';
+import { schedule } from './schedule';
+import { membershipPrice } from './membershipPrice';
+import { businessInformation } from './businessInformation';
+import { announcement } from './announcement';
+import { faq } from './faq';
+export const schemaTypes = [homepage, branding, academyPhoto, program, classDefinition, instructor, schedule, membershipPrice, businessInformation, announcement, faq];

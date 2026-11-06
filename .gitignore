@@ -5,3 +5,9 @@ out/
 !.env.example
 *.tsbuildinfo
 .DS_Store
+.open-next/
+.wrangler/
+.dev.vars*
+.sanity/
+studio-dist/
+cloudflare-env.d.ts
