@@ -1,5 +1,7 @@
 # Sanity CMS readiness
 
+For the latest launch flow, see [LAUNCH_SETUP.md](./LAUNCH_SETUP.md). The earlier integration notes follow.
+
 ## Available now
 
 `sanity/schemaTypes/` contains schemas for homepage, branding, academy photos, programs, classes, instructors, weekly schedules, membership pricing, business information, announcements/promotions, and FAQs. References connect class → program/instructor and schedule → class. Owner approval and active/published fields keep unconfirmed offers, prices, and profiles out of public queries. Scheduled promotions are also checked against start/end dates in the content resolver.

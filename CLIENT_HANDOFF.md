@@ -4,7 +4,11 @@ Branch: `codex/cloudflare-cms-meta-readiness`
 Baseline: `main` commit `4da844a`  
 Prepared: November 6, 2026
 
-## Current release status
+## Latest launch update
+
+See [LAUNCH_SETUP.md](./LAUNCH_SETUP.md) for the current trial form, private Worker/D1 lead storage, Resend notification retries, Sanity starter import, and GTM or direct conversions. The remaining sections describe earlier readiness work.
+
+## Earlier release status
 
 The client subsequently authorized Vercel production deployment on November 6, 2026. Commit `497d132` was deployed successfully to https://cariox-smoky.vercel.app through `main`, with the instructor portrait, ten competition results, and no emoji decorations verified over HTTPS. The next authorized update replaces the sample week with the supplied 43-session timetable and corrected Gi/No-Gi rules; see [schedule provenance](./docs/schedule-content.md). Registration and the booking calendar remain demos. No Cloudflare migration, CMS connection, Meta activation, account creation, paid subscription, or DNS change is authorized by this content release.
 

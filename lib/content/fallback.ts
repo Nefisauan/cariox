@@ -4,9 +4,10 @@ import { OFFICIAL_LOGO_URL } from '../branding';
 export const fallbackContent: AcademyContent = {
   source: 'fallback', faqsConfirmed: false, programsConfirmed: true, scheduleConfirmed: true,
   homepage: {
-    heroEyebrow: 'BRAZILIAN JIU-JITSU · SALOMÃO BJJ TEAM', heroTitle: ['MORE THAN', 'A MARTIAL ART.', 'A WAY FORWARD.'], heroDescription: 'Find your strength. Build your confidence.\nBecome more, on and off the mat.', primaryCta: 'Plan your first visit', secondaryCta: 'Explore the academy',
+    heroEyebrow: 'BRAZILIAN JIU-JITSU · SALOMÃO BJJ TEAM', heroTitle: ['MORE THAN', 'A MARTIAL ART.', 'A WAY FORWARD.'], heroDescription: 'Find your strength. Build your confidence.\nBecome more, on and off the mat.', secondaryCta: 'Explore the academy',
     about: { eyebrow: 'ROOTED IN SOMETHING REAL', title: 'Leave your ego.', accent: 'everything.', accentPrefix: 'Bring your', lead: 'Jiu-Jitsu begins with a simple decision: to show up. To be a beginner. To discover what you’re capable of.', body: 'CARIOX brings Brazilian martial arts into a space made for connection. Rooted in the Salomão BJJ Team identity, our vision is built around respect, intentional practice, and the belief that we grow together.', imageCaption: 'BRAZILIAN IN SPIRIT. CARIOX BY NATURE.' },
     programs: { title: 'Different paths.', accent: 'One pursuit.', description: 'Finding your feet or finding your edge?\nStart with what moves you.' },
+    schedule: { title: 'A little discipline.', accent: 'A different day.', description: 'Class times are preliminary and may change. The academy will coordinate your free trial directly.', showTimetable: true },
     team: { title: 'Good technique.', accent: 'Great people.', body: 'Meet the instructor behind the practice. Explore a competition record spanning Jiu-Jitsu, No-Gi, and Luta Livre.' },
     culture: { eyebrow: 'MORE THAN A PLACE TO TRAIN.', title: 'A place to', accent: 'belong.', body: 'The small conversations. The shared progress.\nThe people who keep you coming back.\nThat’s the culture we’re building.', quote: 'Progress is personal.\nThe journey is shared.' },
     contact: { eyebrow: 'THERE’S A PLACE FOR YOUR QUESTIONS', title: 'Your next chapter.', accent: 'Starts here.', body: 'A question, a goal, a little curiosity. Tell us what you’re looking for, or explore what your first visit could look like.' },
@@ -29,8 +30,8 @@ export const fallbackContent: AcademyContent = {
     {question:'Do I need experience to explore Jiu-Jitsu?',answer:'No prior knowledge is needed to learn about the practice. If you’re new, share that with the academy so the team can confirm a suitable introduction before you attend.'},
     {question:'What should I bring for a first visit?',answer:'As a general starting point, bring water and comfortable training clothes. Ask the academy to confirm its uniform, equipment, and hygiene requirements before joining a class.'},
     {question:'Can I ask about training for my child?',answer:'Yes. Kids’ Jiu-Jitsu is Gi on Monday and Wednesday, and No-Gi on Friday and Saturday. Kids’ Muay Thai is on Tuesday and Thursday. Check the schedule for times and ask the academy about suitable ages and enrollment requirements.'},
-    {question:'Where can I find pricing and the class schedule?',answer:'The academy’s weekly class schedule is published in the Schedule section, with day and program filters and Gi/No-Gi labels. Prices and general operating hours still need confirmation. The booking calendar remains a demonstration and does not reserve a class.'},
-    {question:'Does booking here reserve a real class?',answer:'This is a booking preview. You can try selecting a date, time, and session, but no reservation, email, or calendar event is created. A real booking will be available once the academy connects its scheduling service.'},
+    {question:'Where can I find pricing and the class schedule?',answer:'The academy’s weekly class schedule is published in the Schedule section, with day and program filters and Gi/No-Gi labels. Prices and general operating hours still need confirmation. Class times are preliminary; the academy will coordinate your first visit directly.'},
+    {question:'How do I schedule a free trial?',answer:'Select Schedule Your Free Trial Class and tell us what you’d like to try. The academy will reach out to coordinate your first class. A request does not reserve a spot or a specific time.'},
   ],
   instructors: [{
     id: 'academy-instructor', rank: 'Brazilian Jiu-Jitsu black belt', specialties: [],

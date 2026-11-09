@@ -9,9 +9,10 @@ export const faqSchema = z.object({ question: text, answer: text });
 export type AcademyFaq = z.infer<typeof faqSchema>;
 export const headingSchema = z.object({ title: text, accent: text });
 export const homepageSchema = z.object({
-  heroEyebrow: text.max(120), heroTitle: z.array(text.max(40)).length(3), heroDescription: text.max(500), primaryCta: text.max(60), secondaryCta: text.max(60),
+  heroEyebrow: text.max(120), heroTitle: z.array(text.max(40)).length(3), heroDescription: text.max(500), secondaryCta: text.max(60),
   about: headingSchema.extend({ eyebrow: text, accentPrefix: z.string().max(100).optional(), lead: text, body: text, imageCaption: text }),
   programs: headingSchema.extend({ description: text }),
+  schedule: headingSchema.extend({ description: text, showTimetable: z.boolean() }),
   team: headingSchema.extend({ body: text }),
   culture: headingSchema.extend({ eyebrow: text, body: text, quote: text }),
   contact: headingSchema.extend({ eyebrow: text, body: text }),
@@ -24,7 +25,7 @@ export const achievementSchema = z.object({ event: text.max(160), placement: z.n
 export const instructorSchema = z.object({ id: text, name: text.optional(), rank: text, experience: text.optional(), specialties: z.array(text).default([]), biography: text.optional(), achievements: z.array(achievementSchema).max(50).default([]), photoUrl: imageUrl, photoAlt: text });
 export type Instructor = z.infer<typeof instructorSchema>;
 export const classSchema = z.object({ id: text, name: text, type: text, level: text, instructor: text.optional() });
-export const scheduleSchema = z.object({ id: text, day: z.enum(['Mon','Tue','Wed','Thu','Fri','Sat','Sun']), time: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]$/), period: z.enum(['AM','PM']), name: text, type: text, level: text.optional(), instructor: text.optional(), timezone: text.refine(value => { try { new Intl.DateTimeFormat('en', { timeZone: value }); return true; } catch { return false; } }).optional() });
+export const scheduleSchema = z.object({ id: text, day: z.enum(['Mon','Tue','Wed','Thu','Fri','Sat','Sun']), time: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]$/), period: z.enum(['AM','PM']), name: text, type: text, description: text.max(300).optional(), level: text.optional(), instructor: text.optional(), timezone: text.refine(value => { try { new Intl.DateTimeFormat('en', { timeZone: value }); return true; } catch { return false; } }).optional() });
 export type AcademySchedule = z.infer<typeof scheduleSchema>;
 export const priceSchema = z.object({ id: text, title: text, description: text, amount: z.number().nonnegative(), currency: z.string().regex(/^[A-Z]{3}$/), interval: z.enum(['month','year','session','one-time']) });
 export type MembershipPrice = z.infer<typeof priceSchema>;

@@ -29,8 +29,8 @@ test('conversion receipt guards reject demo, pending, unverified, and mismatched
   assert.equal(isVerifiedConversion(receipt,'Lead'),false);
 });
 test('consent storage validates format, expiry, and future timestamps',()=>{
-  const now=Date.parse('2026-11-06T12:00:00Z');const record=(updatedAt:number)=>JSON.stringify({version:1,value:'granted',updatedAt});
-  assert.equal(parseConsent(null,now),'unknown');assert.equal(parseConsent('invalid',now),'unknown');
+  const now=Date.parse('2026-11-06T12:00:00Z');const record=(updatedAt:number)=>JSON.stringify({version:2,value:'granted',updatedAt});
+  assert.equal(parseConsent(JSON.stringify({version:1,value:'granted',updatedAt:now}),now),'unknown');assert.equal(parseConsent(null,now),'unknown');assert.equal(parseConsent('invalid',now),'unknown');
   assert.equal(parseConsent(record(now-1000),now),'granted');assert.equal(parseConsent(record(now+1000),now),'unknown');
   assert.equal(parseConsent(record(now-181*86400000),now),'unknown');
 });

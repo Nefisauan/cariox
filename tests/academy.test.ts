@@ -36,5 +36,5 @@ test('receptionist does not invent policies or misclassify substrings', () => {
   assert.match(receptionistReply('What age can my child start?'), /awaiting academy confirmation/);
   assert.doesNotMatch(receptionistReply('Can I leave a message?'), /minimum ages/);
   assert.match(receptionistReply('Where are you located?'), /address/);
-  assert.match(receptionistReply('Can I book a trial?'), /won’t reserve/);
+  assert.match(receptionistReply('Can I book a trial?'), /does not reserve/);
 });

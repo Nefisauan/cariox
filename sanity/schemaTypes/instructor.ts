@@ -1,7 +1,7 @@
 import { defineType, defineField } from 'sanity';
 import { requiredText, confirmationFields, imageField } from './shared';
 export const instructor = defineType({ name: 'instructor', title: 'Instructors', type: 'document', fields: [
-  requiredText('name', 'Full name'), requiredText('rank', 'Verified belt rank'),
+  defineField({ name:'name', title:'Full name (when approved)', type:'string' }), requiredText('rank', 'Verified belt rank'),
   defineField({ name: 'experience', title: 'Verified experience', type: 'string' }),
   defineField({ name: 'specialties', title: 'Specialties', type: 'array', of: [{ type: 'string' }] }),
   defineField({ name: 'biography', title: 'Biography', type: 'text' }),

@@ -1,5 +1,7 @@
 # Cloudflare Workers readiness
 
+For the latest launch flow, see [LAUNCH_SETUP.md](./LAUNCH_SETUP.md). The earlier integration notes follow.
+
 ## Implemented, without account access
 
 This remains a Next.js 16 App Router application with React and TypeScript. The interactive page moved to `components/AcademyHome.tsx`; a server page now loads CMS content. Native dialogs, CSS perspective, cursor tilt, galleries, local fonts, and mobile styles are retained. Vercel's normal `npm run build` path remains supported.

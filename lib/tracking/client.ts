@@ -2,10 +2,13 @@
 import { getMetaConfiguration, isVerifiedConversion, type MarketingConsent, type MetaEvent } from './contracts';
 import { ConsentAwareTracker } from './engine';
 import { privacySignal, storeConsent } from './consent';
+import { googleConfig, setGoogleConsent, trackGooglePageView, trackGoogleTrialLead } from './google';
+import { isTrialReceipt } from '../trial/contract';
 
 type Fbq = ((...args: unknown[]) => void) & { queue?: unknown[][]; callMethod?: (...args: unknown[]) => void; push?: Fbq; loaded?: boolean; version?: string };
 declare global { interface Window { fbq?: Fbq; _fbq?: Fbq } }
-export const metaConfig = getMetaConfiguration({ NEXT_PUBLIC_META_PIXEL_ENABLED: process.env.NEXT_PUBLIC_META_PIXEL_ENABLED, NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID });
+export const metaConfig = getMetaConfiguration({ NEXT_PUBLIC_META_PIXEL_ENABLED: googleConfig.gtmId ? undefined : process.env.NEXT_PUBLIC_META_PIXEL_ENABLED, NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID });
+export const trackingEnabled = metaConfig.enabled || googleConfig.enabled;
 let initialized = false;
 let script: HTMLScriptElement | null = null;
 let scriptFailed = false;
@@ -37,6 +40,7 @@ export const tracker = new ConsentAwareTracker(metaConfig.enabled, (event: MetaE
 export function setMarketingConsent(requested: MarketingConsent, persist = true): MarketingConsent {
   const value = privacySignal() ? 'denied' : requested;
   tracker.setConsent(value);
+  setGoogleConsent(value);
   if (persist && value !== 'unknown') storeConsent(value);
   if (value === 'granted') initializePixel();
   else if (typeof window !== 'undefined') {
@@ -49,7 +53,17 @@ export function setMarketingConsent(requested: MarketingConsent, persist = true)
   return value;
 }
 export const newEventId = (prefix: string) => `${prefix}:${crypto.randomUUID()}`;
-export function trackPageView(navigationId: string) { return tracker.track('PageView',navigationId); }
+export function trackPageView(navigationId: string) {
+  const meta = tracker.track('PageView', navigationId);
+  const google = trackGooglePageView(navigationId);
+  return meta || google;
+}
+export function trackTrialLead(receipt: unknown) {
+  if (!isTrialReceipt(receipt) || privacySignal()) return false;
+  const meta = tracker.track('Lead', receipt.eventId);
+  const google = trackGoogleTrialLead(receipt.eventId);
+  return meta || google;
+}
 async function trackVerified(event: 'Lead'|'CompleteRegistration', reference: string): Promise<boolean> {
   if (!tracker.canTrack() || privacySignal() || !/^[A-Za-z0-9_:-]{8,160}$/.test(reference)) return false;
   try {

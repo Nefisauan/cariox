@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "cariox-trial",
+  "main": "workers/trial/index.ts",
+  "compatibility_date": "2026-11-06",
+  "workers_dev": true,
+  "preview_urls": false,
+  "d1_databases": [
+    { "binding": "LEADS_DB", "database_name": "cariox-trials", "database_id": "", "migrations_dir": "workers/trial/migrations" }
+  ],
+  "triggers": { "crons": ["*/10 * * * *"] }
+}

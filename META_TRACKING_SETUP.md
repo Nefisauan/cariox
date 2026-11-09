@@ -1,5 +1,7 @@
 # Meta Pixel and optional Conversions API
 
+For the latest launch flow, see [LAUNCH_SETUP.md](./LAUNCH_SETUP.md). The earlier integration notes follow.
+
 ## Default behavior
 
 Tracking is OFF. `.env.example` has no Pixel ID, server token, test code, or Graph API version. Without both `NEXT_PUBLIC_META_PIXEL_ENABLED=true` and a syntactically valid owner Pixel ID, no consent overlay or Pixel script is rendered/loaded. No noscript image bypasses consent. No integration was tested against a real Meta account.

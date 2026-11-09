@@ -11,3 +11,5 @@ out/
 .sanity/
 studio-dist/
 cloudflare-env.d.ts
+
+wrangler.trial.local.jsonc

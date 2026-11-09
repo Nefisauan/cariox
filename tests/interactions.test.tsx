@@ -20,17 +20,18 @@ document.head.appendChild(css);
 const { render, fireEvent, cleanup, waitFor } = await import('@testing-library/react');
 // Next's image component is supplied by its compiler in production.
 // Use a normal image in DOM tests to control network load/error events.
-mock.module('next/image', { defaultExport: ({fill, sizes, loading, unoptimized, ...props}: Record<string, unknown>) => React.createElement('img', props) });
+mock.module('next/image', { defaultExport: ({fill, sizes, loading, unoptimized, priority, ...props}: Record<string, unknown>) => React.createElement('img', props) });
 const { default: DepthSurface } = await import('../components/DepthSurface');
 const { default: ProgramExplorer } = await import('../components/ProgramExplorer');
 const { default: GalleryShowcase } = await import('../components/GalleryShowcase');
-const { default: BookingDialog } = await import('../components/Booking');
+const { default: TrialDialog } = await import('../components/TrialDialog');
 const { default: Navigation } = await import('../components/Navigation');
 const { default: FirstVisit } = await import('../components/FirstVisit');
 const { default: ContactForm } = await import('../components/ContactForm');
 const { default: Receptionist } = await import('../components/Receptionist');
 const { default: InstructorSection } = await import('../components/content/InstructorSection');
 const { default: ClassSchedule } = await import('../components/content/ClassSchedule');
+const { default: AcademyHome } = await import('../components/AcademyHome');
 afterEach(() => { cleanup(); document.body.style.overflow = ''; });
 
 test('the published schedule switches days and filters without losing the Wednesday Gi exceptions', () => {
@@ -142,33 +143,74 @@ test('depth has an accessible on/off control and scene arrows work after image l
 });
 
 
-test('booking supports date, details, honest receipt, and restores focus on close', async () => {
-  const trigger = document.createElement('button'); trigger.textContent = 'Booking trigger'; document.body.appendChild(trigger); trigger.focus();
+test('trial form sends multiple interests, preserves the retry key, and confirms only a saved request', async () => {
+  const original = globalThis.fetch;
+  const keys: string[] = [];
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, '/api/trial');
+    keys.push(new Headers(init?.headers).get('Idempotency-Key')!);
+    assert.deepEqual(JSON.parse(String(init?.body)).interests, ['Brazilian Jiu-Jitsu', 'Kids Classes']);
+    if (keys.length === 1) return Response.json({ ok: false }, { status: 502 });
+    return Response.json({ ok: true, status: 'accepted', eventId: 'trial-12345678-1234-4123-8123-123456789abc' }, { status: 201 });
+  };
+  const trigger = document.createElement('button'); document.body.appendChild(trigger); trigger.focus();
   document.body.style.overflow = 'clip';
-  const view = render(<BookingDialog close={() => view.unmount()} />);
-  assert.equal(document.body.style.overflow, 'hidden');
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const target = new Date(today); target.setDate(target.getDate() + 1);
-  while (target.getDay() === 0) target.setDate(target.getDate() + 1);
-  if (target.getMonth() !== today.getMonth()) fireEvent.click(view.getByRole('button', { name: 'Next month' }));
-  fireEvent.click(view.getByRole('button', { name: target.toLocaleDateString('en-US', { dateStyle: 'full' }) }));
-  await waitFor(() => assert.ok(view.getByRole('button', { name: '09:00 AM' })));
-  fireEvent.click(view.getByRole('button', { name: '09:00 AM' }));
-  fireEvent.click(view.getByRole('button', { name: 'Continue to your details' }));
-  fireEvent.change(view.getByLabelText('Full name'), { target: { value: 'Alex Visitor' } });
-  fireEvent.change(view.getByLabelText('Email address'), { target: { value: 'alex@example.com' } });
-  fireEvent.change(view.getByLabelText('Phone number'), { target: { value: '5551234567' } });
-  fireEvent.click(view.getByRole('button', { name: 'Complete booking preview' }));
-  await waitFor(() => assert.match(view.getByRole('status').textContent!, /not reserved/));
-  assert.match(view.getByRole('status').textContent!, /Nothing was sent or saved/);
-  fireEvent.click(view.getByRole('button', { name: 'Close booking' }));
-  assert.equal(document.body.style.overflow, 'clip');
-  assert.equal(document.activeElement, trigger);
-  trigger.remove();
+  try {
+    const view = render(<TrialDialog available close={() => view.unmount()} />);
+    assert.equal(document.body.style.overflow, 'hidden');
+    assert.equal(view.queryByRole('button', { name: 'Next month' }), null);
+    fireEvent.change(view.getByLabelText('Full Name'), { target: { value: 'Alex Visitor' } });
+    fireEvent.change(view.getByLabelText('Email Address'), { target: { value: 'alex@example.com' } });
+    fireEvent.change(view.getByLabelText('Phone Number'), { target: { value: '5551234567' } });
+    fireEvent.click(view.getByRole('button', { name: 'Request My Free Trial' }));
+    assert.match(view.getByRole('alert').textContent!, /Select at least one/);
+    assert.equal(keys.length, 0);
+    fireEvent.click(view.getByRole('checkbox', { name: 'Brazilian Jiu-Jitsu' }));
+    fireEvent.click(view.getByRole('checkbox', { name: 'Kids Classes' }));
+    fireEvent.click(view.getByRole('button', { name: 'Request My Free Trial' }));
+    await waitFor(() => assert.match(view.getByRole('alert').textContent!, /couldn’t confirm/));
+    assert.equal(view.queryByRole('status'), null);
+    fireEvent.click(view.getByRole('button', { name: 'Request My Free Trial' }));
+    await waitFor(() => assert.match(view.getByRole('status').textContent!, /coordinate your first free class/));
+    assert.equal(keys.length, 2);
+    assert.equal(keys[0], keys[1]);
+    fireEvent.click(view.getByRole('button', { name: 'Back to the academy' }));
+    assert.equal(document.body.style.overflow, 'clip');
+    assert.equal(document.activeElement, trigger);
+  } finally { globalThis.fetch = original; trigger.remove(); }
+});
+
+test('every homepage trial entry point opens the same form', async () => {
+  const view = render(<AcademyHome trialAvailable={false} />);
+  const expectTrial = async () => {
+    const dialog = await view.findByRole('dialog', { name: 'Schedule Your Free Trial Class' });
+    assert.ok(dialog.querySelector('input[name="email"]'));
+    fireEvent.click(view.getByRole('button', {name:'Close trial form'}));
+  };
+  for (const selector of ['.header-cta','.hero-ctas button','#first-visit button.underlined-link',
+    '#contact .contact-grid > div > button','.final-cta button','.mobile-visit-bar button']) {
+    const button = view.container.querySelector(selector);
+    assert.ok(button, selector);
+    fireEvent.click(button);
+    await expectTrial();
+  }
+  fireEvent.click(view.container.querySelector('.menu-toggle')!);
+  fireEvent.click(view.container.querySelector('.mobile-nav > button.full')!);
+  await expectTrial();
+  fireEvent.click(view.getByRole('button', {name:'Let’s talk'}));
+  fireEvent.click(view.container.querySelector('.chat-suggestions > button:last-child')!);
+  await expectTrial();
+});
+
+test('unconfigured trial dialog does not accept visitor information', () => {
+  const view = render(<TrialDialog available={false} close={() => {}} />);
+  assert.ok(view.getByText(/online trial requests aren’t open yet/i));
+  assert.ok((view.getByRole('button', {name:'Request My Free Trial'}) as HTMLButtonElement).matches(':disabled'));
+  assert.ok((view.getByRole('textbox', {name:'Full Name'}) as HTMLInputElement).matches(':disabled'));
 });
 
 test('mobile navigation labels its dialog and restores scroll state after selecting a section', () => {
-  const view = render(<Navigation book={() => {}} />);
+  const view = render(<Navigation openTrial={() => {}} />);
   // JSDOM has no responsive layout engine; expose the mobile trigger for its behavior test.
   const toggle = view.container.querySelector<HTMLButtonElement>('[aria-label="Open navigation"]')!;
   toggle.style.display = 'inline-grid';
@@ -183,11 +225,11 @@ test('mobile navigation labels its dialog and restores scroll state after select
 });
 
 test('FAQs expand and collapse while keeping truthful answers accessible', () => {
-  const view = render(<FirstVisit book={() => {}} />);
-  const question = view.getByRole('button', { name: 'Does booking here reserve a real class?' });
+  const view = render(<FirstVisit openTrial={() => {}} />);
+  const question = view.getByRole('button', { name: 'How do I schedule a free trial?' });
   fireEvent.click(question);
   assert.equal(question.getAttribute('aria-expanded'), 'true');
-  assert.match(view.getByRole('region', { name: 'Does booking here reserve a real class?' }).textContent!, /no reservation/);
+  assert.match(view.getByRole('region', { name: 'How do I schedule a free trial?' }).textContent!, /does not reserve/);
   fireEvent.click(question);
   assert.equal(question.getAttribute('aria-expanded'), 'false');
 });
@@ -207,10 +249,10 @@ test('an inquiry becomes a copyable draft and retains details when edited', asyn
   assert.equal((view.getByLabelText('Your name') as HTMLInputElement).value, 'Alex Visitor');
 });
 
-test('receptionist does not steal initial focus and supports Escape and booking handoff', () => {
+test('receptionist does not steal initial focus and supports Escape and trial handoff', () => {
   let booked = false;
   const trigger = document.createElement('button'); document.body.appendChild(trigger); trigger.focus();
-  const view = render(<Receptionist book={() => { booked = true; }} />);
+  const view = render(<Receptionist openTrial={() => { booked = true; }} />);
   assert.equal(document.activeElement, trigger);
   const toggle = view.getByRole('button', { name: 'Let’s talk' });
   fireEvent.click(toggle);
@@ -219,7 +261,7 @@ test('receptionist does not steal initial focus and supports Escape and booking 
   assert.equal(view.queryByRole('log'), null);
   assert.equal(document.activeElement, toggle);
   fireEvent.click(toggle);
-  fireEvent.click(view.getByRole('button', { name: 'Explore booking' }));
+  fireEvent.click(view.getByRole('button', { name: 'Schedule Your Free Trial Class' }));
   assert.equal(booked, true);
   assert.equal(view.queryByRole('log'), null);
   trigger.remove();

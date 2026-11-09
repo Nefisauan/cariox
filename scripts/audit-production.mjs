@@ -30,6 +30,8 @@ assert.ok(document.querySelector('.footer-top .brand-logo'),'Footer must use the
 assert.equal(document.querySelectorAll('.wordmark').length,0,'Old text-only logos must not render');
 assert.ok(document.head.querySelector('link[rel="icon"][href^="/icon.png"]'),'Browser icon must use the official logo');
 assert.ok(document.head.querySelector('meta[property="og:image"]')?.content.endsWith('/share-image'),'Share metadata must point to the official-logo card');
+assert.ok(visibleText.textContent.includes('Schedule Your Free Trial Class'),'The homepage must offer the free trial request');
+assert.ok(!/Complete booking preview|Explore the booking experience|BOOKINGS & CHAT ARE DEMOS/.test(visibleText.textContent),'The old demo booking language must not render');
 assert.equal(document.querySelectorAll('#schedule .class-row').length,43,'All 43 supplied weekly classes must render');
 assert.ok(!/sample|illustrative|preview/i.test(document.querySelector('#schedule').textContent),'Published schedule must not contain demo timetable copy');
 for (const id of ['wed-0930-am','wed-0400-pm']) assert.equal(document.querySelector(`[data-class-id="${id}"] .level-tag`).textContent,'Gi');

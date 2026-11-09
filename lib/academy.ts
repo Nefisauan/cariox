@@ -1,3 +1,4 @@
+import { TRIAL_CTA } from './trial/contract';
 import { fallbackContent } from './content/fallback';
 import type { AcademyContent } from './content/types';
 
@@ -46,12 +47,12 @@ export const demoSchedulingProvider: SchedulingProvider = {
 
 export function receptionistReply(question: string, content: AcademyContent = fallbackContent): string {
   const q = question.toLowerCase();
-  if (/\b(price|pricing|cost|membership|much)\b/.test(q)) return 'Membership pricing has not been published. The academy will need to confirm current pricing. You can explore the booking preview without making a reservation.';
+  if (/\b(price|pricing|cost|membership|much)\b/.test(q)) return 'Membership pricing has not been published. The academy will need to confirm current pricing. Ask the academy when you arrange your free trial.';
   if (/\b(kid|kids|child|children|age|ages)\b/.test(q)) return content.scheduleConfirmed ? 'Kids’ classes are listed in the published Schedule section. Check each session’s Gi or No-Gi label. Minimum ages and enrollment requirements are awaiting academy confirmation.' : 'Children’s programs and minimum ages are awaiting academy confirmation. No age or enrollment policy is available in this demo.';
-  if (/\b(hour|hours|schedule|time|times|gi|nogi|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/.test(q)) return content.scheduleConfirmed ? 'The weekly class schedule is published in the Schedule section. Select a day and program for class times and Gi/No-Gi labels. Times are academy local time. General opening hours and class availability still need academy confirmation; the booking calendar remains a demo.' : 'A confirmed class schedule has not been supplied. The booking calendar is a demonstration and does not confirm real class times or availability.';
+  if (/\b(trial|book|booking|visit|calendar)\b/.test(q)) return `Use “${TRIAL_CTA}” to request a trial when online requests are open. The academy will reach out to coordinate your first class. The form does not reserve a time.`;
+  if (/\b(hour|hours|schedule|time|times|gi|nogi|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/.test(q)) return content.scheduleConfirmed && content.homepage.schedule.showTimetable ? 'The weekly class schedule is published in the Schedule section. Class times are preliminary and in academy local time. The academy will coordinate your trial directly.' : 'Class times are not currently listed. Ask the academy when you arrange your free trial.';
   if (/\b(bring|wear|first)\b/.test(q)) return 'As general preparation, bring water and comfortable training clothes. Please confirm clothing, hygiene, and equipment requirements with the academy before attending.';
-  if (/\b(book|booking|trial|visit|calendar)\b/.test(q)) return 'Use “Explore booking” below to choose a sample date and time. This preview won’t reserve a class or send a confirmation. A real appointment requires the academy’s live booking service.';
   if (/\b(beginner|beginners|private|program|programs|class|classes)\b/.test(q)) return content.scheduleConfirmed ? `The published schedule lists ${[...new Set(content.schedules.map(item => item.name))].join(', ')}. Ask the academy which session suits your experience. A listing is not a reservation.` : 'The confirmed program list is coming soon. You can prepare a message about your training interests in the inquiry form.';
   if (/\b(where|address|location|phone|email|contact)\b/.test(q)) return 'The academy’s address and contact information are awaiting confirmation. I won’t guess those details. You can prepare your questions in the inquiry section.';
-  return 'I’m the CARIOX demo receptionist. I can point you to the class schedule and explain first-session preparation and the sample booking flow. Responses are scripted; reservations require a connected booking service.';
+  return 'I’m the CARIOX demo receptionist. I can point you to the class schedule and explain first-session preparation and how to request a free trial. Responses are scripted; the academy coordinates trial times directly.';
 }

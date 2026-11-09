@@ -4,9 +4,10 @@ const heading = [requiredText('title', 'Heading'), requiredText('accent', 'Accen
 export const homepage = defineType({ name: 'homepage', title: 'Homepage', type: 'document', fields: [
   requiredText('heroEyebrow', 'Hero eyebrow'),
   defineField({ name: 'heroTitle', title: 'Hero headline (three lines)', type: 'array', of: [{ type: 'string', validation: rule => rule.required().max(40) }], validation: rule => rule.required().length(3) }),
-  requiredText('heroDescription', 'Hero supporting copy', 'text'), requiredText('primaryCta', 'Primary button label'), requiredText('secondaryCta', 'Explore link label'),
+  requiredText('heroDescription', 'Hero supporting copy', 'text'), requiredText('secondaryCta', 'Explore link label'),
   defineField({ name:'about', title:'About', type:'object', fields:[...heading, requiredText('eyebrow','Eyebrow'), defineField({name:'accentPrefix',title:'Words before the accent',type:'string'}), requiredText('lead','Lead paragraph','text'), requiredText('body','Body','text'), requiredText('imageCaption','Image caption')] }),
   defineField({ name:'programs', title:'Programs introduction', type:'object', fields:[...heading, requiredText('description','Supporting copy','text')] }),
+  defineField({ name:'schedule', title:'Schedule display', type:'object', fields:[...heading, requiredText('description','Schedule notice','text'), defineField({name:'showTimetable',title:'Show class times',type:'boolean',initialValue:true})] }),
   defineField({ name:'team', title:'Team introduction', type:'object', fields:[...heading, requiredText('body','Body','text')] }),
   defineField({ name:'culture', title:'Community', type:'object', fields:[...heading, requiredText('eyebrow','Eyebrow'), requiredText('body','Body','text'), requiredText('quote','Philosophy statement (not a testimonial)','text')] }),
   defineField({ name:'contact', title:'Contact introduction', type:'object', fields:[...heading, requiredText('eyebrow','Eyebrow'), requiredText('body','Body','text')] }),

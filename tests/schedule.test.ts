@@ -51,6 +51,6 @@ test('scripted receptionist distinguishes the published timetable from demo book
   const answer=receptionistReply('What is the schedule?');
   assert.match(answer,/weekly class schedule is published/i);
   assert.doesNotMatch(answer,/schedule.*sample/i);
-  assert.match(answer,/booking calendar remains a demo/);
+  assert.match(answer,/coordinate your trial directly/);
   assert.match(receptionistReply('What classes are offered?'),/Muay Thai/);
 });

@@ -473,3 +473,18 @@ dialog::backdrop{background:#0b170edb;backdrop-filter:blur(8px)}
 @media(max-width:850px){.site-header .brand-logo{width:150px}.mobile-nav-top .brand-logo{width:180px}}
 @media(max-width:600px){.site-header .brand-logo{width:132px}.image-corner{width:115px;height:65px;padding:10px}.footer-top .brand-logo{width:180px}.recovery-brand .brand-logo{width:190px}}
 @media(max-width:360px){.site-header .brand-logo{width:114px}}
+
+/* The trial request uses the existing dialog and site palette. */
+.trial-dialog h2{font-size:clamp(33px,5vw,51px);margin:10px 28px 12px 0}
+.trial-intro{color:var(--muted);font-size:13px;margin-bottom:18px}
+.trial-fields,.trial-interests{border:0;padding:0;margin:0;min-width:0}
+.trial-interests{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px;margin:15px 0}
+.trial-interests legend{font-size:13px;font-weight:600;margin-bottom:5px}
+.trial-interests legend small{font-weight:400;color:var(--muted)}
+.trial-interests label{display:flex;align-items:center;gap:8px;min-height:42px;font-size:12px}
+.trial-dialog .trial-interests input{appearance:auto;display:inline-block;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:var(--green);flex-shrink:0}
+.trial-dialog .booking-done [role=status] p{margin:8px 0 16px}
+.trial-nav-short{display:none}
+.class-title>p{font-size:12px;color:var(--muted)}
+@media(max-width:1100px){.trial-nav-long{display:none}.trial-nav-short{display:inline}}
+@media(max-width:380px){.trial-interests{grid-template-columns:1fr;gap:0}}

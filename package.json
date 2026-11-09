@@ -14,7 +14,9 @@
     "cf:types": "WRANGLER_SEND_METRICS=false wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "studio:build": "node scripts/check-sanity-env.mjs && DO_NOT_TRACK=1 sanity build studio-dist",
     "studio:typegen": "node scripts/check-sanity-env.mjs && DO_NOT_TRACK=1 sanity schema extract --path sanity/schema.json && DO_NOT_TRACK=1 sanity typegen generate",
-    "audit:design": "node scripts/check-design-parity.mjs"
+    "audit:design": "node scripts/check-design-parity.mjs",
+    "studio:prepare-content": "node --import tsx scripts/prepare-sanity-content.ts",
+    "studio:deploy": "node scripts/check-sanity-env.mjs && DO_NOT_TRACK=1 sanity deploy"
   },
   "dependencies": {
     "@sanity/client": "^8.15.0",
