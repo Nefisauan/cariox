@@ -1,4 +1,5 @@
 import { emailAddress, type TrialInput } from './input';
+import { ServiceError } from '../services/http';
 
 export type DeliveryConfig = { apiKey: string; from: string; recipients: string[] };
 
@@ -12,7 +13,7 @@ export function trialDeliveryConfig(env: Record<string, string | undefined>): De
   return { apiKey, from, recipients };
 }
 
-export async function sendTrialNotification(settings: DeliveryConfig, eventId: string, input: TrialInput, send = fetch) {
+export async function sendTrialNotification(settings: DeliveryConfig, eventId: string, input: TrialInput, send: typeof fetch) {
   const response = await send('https://api.resend.com/emails', {
     method: 'POST', redirect: 'error', signal: AbortSignal.timeout(8000),
     headers: { Authorization: `Bearer ${settings.apiKey}`, 'Content-Type': 'application/json', 'Idempotency-Key': `cariox-trial/${eventId}` },
@@ -27,7 +28,7 @@ export async function sendTrialNotification(settings: DeliveryConfig, eventId: s
       ].join('\n'),
     }),
   });
-  if (!response.ok) throw new Error('Email provider did not accept the notification');
+  if (!response.ok) throw new ServiceError(response.status, 'EMAIL_REJECTED', 'Email provider did not accept the notification');
   const result: unknown = await response.json();
   const id = result && typeof result === 'object' && 'id' in result ? result.id : undefined;
   if (typeof id !== 'string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)) {

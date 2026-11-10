@@ -41,7 +41,7 @@ function matches(row: Row, input: TrialInput) {
   return row.name === input.name && row.email === input.email && row.phone === input.phone && row.interests === JSON.stringify(input.interests);
 }
 
-export function createTrialWorker({ send = fetch, now = currentTime } = {}) {
+export function createTrialWorker({ send = fetch.bind(globalThis), now = currentTime } = {}) {
   async function notify(env: Env, settings: DeliveryConfig, row: Row) {
     try {
       const time = now();
@@ -57,9 +57,12 @@ export function createTrialWorker({ send = fetch, now = currentTime } = {}) {
       const marked = await env.LEADS_DB.prepare('UPDATE trial_leads SET notification_id = ?, notified_at = ? WHERE submission_key = ?')
         .bind(notificationId, now(), row.submission_key).run();
       if (!marked.success) throw new Error('Could not mark the notification');
-    } catch {
+    } catch (error) {
       // No lead data, credentials, or provider response bodies in logs. D1 retains the pending row.
-      console.warn('Trial notification pending retry.');
+      const reason = error instanceof ServiceError && error.code === 'EMAIL_REJECTED'
+        ? `email provider HTTP ${error.status}`
+        : error instanceof TypeError ? 'request error' : 'notification error';
+      console.warn(`Trial notification pending retry (${reason}).`);
     }
   }
 
