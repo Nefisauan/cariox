@@ -20,7 +20,7 @@ Original concept files and previous dimension-free edits remain as historical so
 
 `components/BrandLogo.tsx` and `lib/branding.ts` centralize the official asset. Navigation (desktop/mobile), footer, about-image badge, instructor caption, chat avatar, 404 page, and error page use it. Dark contexts use a small ivory ground to retain the original green/gold colors and keep the dark lettering legible. Mobile widths are explicitly constrained.
 
-The statically generated `/share-image` embeds the same PNG. Open Graph/Twitter metadata points to that card. The verified existing Vercel production origin, `https://cariox-smoky.vercel.app`, is the metadata fallback when `NEXT_PUBLIC_SITE_URL` is absent; a later approved custom domain can override it. No DNS changes are made.
+The generated social card is served as `/share-image.png` from the static assets. Open Graph/Twitter metadata points to that card. The Cloudflare Worker URL is the metadata fallback when `NEXT_PUBLIC_SITE_URL` is absent; the custom domain can override it. No DNS changes are made.
 
 Original animation/responsive CSS is retained. Additions are limited to the artwork placements and sizes. The original design parity fixture remains; its comparator recognizes only the approved text-logo-to-image replacements, alongside the previously approved instructor/schedule changes.
 

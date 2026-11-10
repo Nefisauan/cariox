@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next';
 const config: NextConfig = {
+  async redirects() {
+    return [{ source: '/share-image', destination: '/share-image.png', permanent: true }];
+  },
   images: {
     // Cloudflare can serve the existing optimized assets without an Images subscription.
     // Vercel retains its normal Next image optimizer. No visual/layout changes.
