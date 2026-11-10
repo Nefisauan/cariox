@@ -40,7 +40,7 @@ The server fetches published Sanity content only when both public project settin
 
 Free-trial requests replace the public calendar demo. Trial submission stays closed until the Worker, D1 and Resend are connected. General inquiries are local drafts and chat replies are scripted. New live API contracts are disconnected and return 503, never false success. No demo action sends a Lead or CompleteRegistration event. Marketing tracking requires a real configured Pixel and explicit consent; optional CAPI has no active call site. There are no client-side API secrets.
 
-Search indexing stays disabled while business details/live services are unverified. Set `NEXT_PUBLIC_SITE_URL` to a confirmed HTTPS origin before a future release. Fonts are locally served WOFF2 files with open licenses in `docs/licenses/`. Production dependencies contain only application runtime packages; Studio/OpenNext tooling remains in development dependencies. Pinned transitive security overrides are recorded in `package.json` and must be retested when upgrading.
+Search indexing is enabled on the canonical production hostname, `carioxgym.com` by default. Set `NEXT_PUBLIC_SITE_URL` if the production domain changes. Fonts are locally served WOFF2 files with open licenses in `docs/licenses/`. Production dependencies contain only application runtime packages; Studio/OpenNext tooling remains in development dependencies. Pinned transitive security overrides are recorded in `package.json` and must be retested when upgrading.
 
 Earlier visual-review notes remain in `docs/client-handoff.md` as a historical record. They are superseded for this readiness branch by the root `CLIENT_HANDOFF.md`.
 
