@@ -13,6 +13,12 @@ export const homepageSchema = z.object({
   about: headingSchema.extend({ eyebrow: text, accentPrefix: z.string().max(100).optional(), lead: text, body: text, imageCaption: text }),
   programs: headingSchema.extend({ description: text }),
   schedule: headingSchema.extend({ description: text, showTimetable: z.boolean() }),
+  bookingUrl: z.url().refine(value => {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' && !url.username && !url.password;
+    } catch { return false; }
+  }, 'Use a public HTTPS booking link').optional(),
   team: headingSchema.extend({ body: text }),
   culture: headingSchema.extend({ eyebrow: text, body: text, quote: text }),
   contact: headingSchema.extend({ eyebrow: text, body: text }),

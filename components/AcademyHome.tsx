@@ -32,7 +32,10 @@ export default function Home({ trialAvailable }: { trialAvailable: boolean }) {
   const [gallery, setGallery] = useState<number | null>(null);
   const hero = useRef<HTMLElement>(null);
   usePageMotion();
-  const openTrial = () => setTrial(true);
+  function openTrial() {
+    if (homepage.bookingUrl) window.location.assign(homepage.bookingUrl);
+    else setTrial(true);
+  }
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <Navigation openTrial={openTrial} />

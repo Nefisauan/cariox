@@ -32,6 +32,8 @@ const { default: Receptionist } = await import('../components/Receptionist');
 const { default: InstructorSection } = await import('../components/content/InstructorSection');
 const { default: ClassSchedule } = await import('../components/content/ClassSchedule');
 const { default: AcademyHome } = await import('../components/AcademyHome');
+const { AcademyContentProvider } = await import('../components/content/ContentProvider');
+const { resolveAcademyContent } = await import('../lib/content/resolve');
 afterEach(() => { cleanup(); document.body.style.overflow = ''; });
 
 test('the published schedule switches days and filters without losing the Wednesday Gi exceptions', () => {
@@ -207,6 +209,18 @@ test('unconfigured trial dialog does not accept visitor information', () => {
   assert.ok(view.getByText(/online trial requests aren’t open yet/i));
   assert.ok((view.getByRole('button', {name:'Request My Free Trial'}) as HTMLButtonElement).matches(':disabled'));
   assert.ok((view.getByRole('textbox', {name:'Full Name'}) as HTMLInputElement).matches(':disabled'));
+});
+
+test('an enabled booking link takes the trial CTA to the configured page', () => {
+  const content = resolveAcademyContent({ homepage: { bookingUrl: `${window.location.origin}/#booking` } });
+  const view = render(<AcademyContentProvider content={content}><AcademyHome trialAvailable={true} /></AcademyContentProvider>);
+  try {
+    fireEvent.click(view.container.querySelector('.header-cta')!);
+    assert.equal(window.location.hash, '#booking');
+    assert.equal(view.queryByRole('dialog', { name: 'Schedule Your Free Trial Class' }), null);
+  } finally {
+    window.history.replaceState(null, '', '/');
+  }
 });
 
 test('mobile navigation labels its dialog and restores scroll state after selecting a section', () => {

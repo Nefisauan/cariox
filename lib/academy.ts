@@ -1,4 +1,4 @@
-import { TRIAL_CTA } from './trial/contract';
+import { TRIAL_BOOKING_GUIDANCE, TRIAL_CTA } from './trial/contract';
 import { fallbackContent } from './content/fallback';
 import type { AcademyContent } from './content/types';
 
@@ -49,10 +49,21 @@ export function receptionistReply(question: string, content: AcademyContent = fa
   const q = question.toLowerCase();
   if (/\b(price|pricing|cost|membership|much)\b/.test(q)) return 'Membership pricing has not been published. The academy will need to confirm current pricing. Ask the academy when you arrange your free trial.';
   if (/\b(kid|kids|child|children|age|ages)\b/.test(q)) return content.scheduleConfirmed ? 'Kids’ classes are listed in the published Schedule section. Check each session’s Gi or No-Gi label. Minimum ages and enrollment requirements are awaiting academy confirmation.' : 'Children’s programs and minimum ages are awaiting academy confirmation. No age or enrollment policy is available in this demo.';
-  if (/\b(trial|book|booking|visit|calendar)\b/.test(q)) return `Use “${TRIAL_CTA}” to request a trial when online requests are open. The academy will reach out to coordinate your first class. The form does not reserve a time.`;
-  if (/\b(hour|hours|schedule|time|times|gi|nogi|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/.test(q)) return content.scheduleConfirmed && content.homepage.schedule.showTimetable ? 'The weekly class schedule is published in the Schedule section. Class times are preliminary and in academy local time. The academy will coordinate your trial directly.' : 'Class times are not currently listed. Ask the academy when you arrange your free trial.';
+  if (/\b(trial|book|booking|visit|calendar)\b/.test(q)) return content.homepage.bookingUrl
+    ? TRIAL_BOOKING_GUIDANCE
+    : `Use “${TRIAL_CTA}” to request a trial when online requests are open. The academy will reach out to coordinate your first class. The form does not reserve a time.`;
+  if (/\b(hour|hours|schedule|time|times|gi|nogi|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/.test(q)) {
+    const timetableVisible = content.scheduleConfirmed && content.homepage.schedule.showTimetable;
+    if (content.homepage.bookingUrl) return timetableVisible
+      ? `The weekly timetable is in the Schedule section. ${TRIAL_BOOKING_GUIDANCE}`
+      : TRIAL_BOOKING_GUIDANCE;
+    return timetableVisible
+      ? 'The weekly class schedule is published in the Schedule section. Class times are preliminary and in academy local time. The academy will coordinate your trial directly.'
+      : 'Class times are not currently listed. Ask the academy when you arrange your free trial.';
+  }
   if (/\b(bring|wear|first)\b/.test(q)) return 'As general preparation, bring water and comfortable training clothes. Please confirm clothing, hygiene, and equipment requirements with the academy before attending.';
   if (/\b(beginner|beginners|private|program|programs|class|classes)\b/.test(q)) return content.scheduleConfirmed ? `The published schedule lists ${[...new Set(content.schedules.map(item => item.name))].join(', ')}. Ask the academy which session suits your experience. A listing is not a reservation.` : 'The confirmed program list is coming soon. You can prepare a message about your training interests in the inquiry form.';
   if (/\b(where|address|location|phone|email|contact)\b/.test(q)) return 'The academy’s address and contact information are awaiting confirmation. I won’t guess those details. You can prepare your questions in the inquiry section.';
+  if (content.homepage.bookingUrl) return `I’m the CARIOX demo receptionist. I can help with the weekly schedule and first-visit preparation. ${TRIAL_BOOKING_GUIDANCE}`;
   return 'I’m the CARIOX demo receptionist. I can point you to the class schedule and explain first-session preparation and how to request a free trial. Responses are scripted; the academy coordinates trial times directly.';
 }

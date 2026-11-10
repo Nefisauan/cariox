@@ -1,4 +1,5 @@
 export const TRIAL_CTA = 'Schedule Your Free Trial Class';
+export const TRIAL_BOOKING_GUIDANCE = `Select “${TRIAL_CTA}” to choose a class and an available time. The booking page will confirm your reservation.`;
 export const TRIAL_INTERESTS = [
   'Brazilian Jiu-Jitsu', 'Self-Defense', 'Muay Thai', 'Kids Classes', "Women's Only Classes",
 ] as const;

@@ -8,7 +8,7 @@ import { schemaTypes } from '../sanity/schemaTypes';
 import { loadPublishedContent } from '../lib/content/load-published';
 import { ACADEMY_QUERY } from '../lib/sanity/queries';
 import { getPublicSiteUrl } from '../lib/config/site';
-import { parse } from 'groq-js';
+import { evaluate, parse } from 'groq-js';
 import { Schema } from '@sanity/schema';
 
 test('all required CMS schema types compile without an account',()=>{
@@ -62,6 +62,27 @@ test('schedule rejects an unknown timezone rather than guessing the academy loca
 });
 
 test('published GROQ query parses offline',()=>{assert.ok(parse(ACADEMY_QUERY));});
+
+test('published booking settings activate only with an enabled public HTTPS link', async () => {
+  const query = parse(ACADEMY_QUERY);
+  const bookingUrl = 'https://book.example/trial?class=jiu-jitsu';
+  const project = async (trialBooking?: { enabled: boolean; url?: string }) => {
+    const result = await evaluate(query, { dataset: [{ _id: 'homepage', _type: 'homepage', trialBooking }] });
+    return resolveAcademyContent(await result.get());
+  };
+
+  assert.equal((await project()).homepage.bookingUrl, undefined);
+  assert.equal((await project({ enabled: false, url: bookingUrl })).homepage.bookingUrl, undefined);
+  for (const url of [undefined, 'not a url', 'javascript:alert(1)', 'http://book.example', 'https://user:password@book.example']) {
+    assert.equal((await project({ enabled: true, url })).homepage.bookingUrl, undefined);
+  }
+
+  const published = await project({ enabled: true, url: bookingUrl });
+  assert.equal(published.homepage.bookingUrl, bookingUrl);
+  assert.match(published.homepage.schedule.description, /booking page/);
+  assert.match(published.faqs.find(faq => faq.question === 'How do I schedule a free trial?')!.answer, /confirm your reservation/);
+});
+
 test('unconfigured loader makes no request and CMS outages retain existing content',async()=>{let requests=0;const read=async()=>{requests++;throw new Error('Synthetic offline failure');};assert.equal(await loadPublishedContent(null,read),fallbackContent);assert.equal(requests,0);assert.equal(await loadPublishedContent({projectId:'unitfixture',dataset:'unitfixture',apiVersion:'2026-11-06'},read),fallbackContent);assert.equal(requests,1);});
 
 test('invalid or credential-bearing public URLs cannot break metadata or leak into canonical links',()=>{assert.equal(getPublicSiteUrl('https://invalid::'),undefined);assert.equal(getPublicSiteUrl('https://user:password@unit.example/'),undefined);assert.equal(getPublicSiteUrl('https://unit.example/?private=value'),undefined);assert.equal(getPublicSiteUrl('https://unit.example/')?.origin,'https://unit.example');});
