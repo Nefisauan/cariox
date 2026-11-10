@@ -81,7 +81,8 @@ export default function Home({ trialAvailable }: { trialAvailable: boolean }) {
     <footer><div className="footer-top"><a className="logo" href="#home" aria-label="CARIOX home"><Wordmark /></a><p>Brazilian roots.<br />A stronger tomorrow.</p><a href="#home">Back to the top <ArrowUpRight size={16} /></a></div><nav className="footer-links" aria-label="Footer navigation"><a href="#about">The academy</a><a href="#programs">Your practice</a><a href="#schedule">Class schedule</a><a href="#first-visit">First visit & FAQ</a><a href="#contact">Get in touch</a></nav><div className="footer-bottom"><span>© {new Date().getFullYear()} {content.branding.wordmarkLeft}{content.branding.wordmarkRight} · {content.branding.affiliation}</span><span>FREE TRIALS BY ARRANGEMENT</span><span>BUILT WITH PURPOSE. OSS.</span></div></footer>
     <div className="mobile-visit-bar"><span>YOUR NEXT CHAPTER.</span><button onClick={openTrial}>{TRIAL_CTA} <ArrowUpRight size={17} /></button></div>
     <Receptionist openTrial={openTrial} />
-    {trial && <TrialDialog available={trialAvailable} booking={booking} close={() => setTrial(false)} />}
+    {trial && <TrialDialog available={trialAvailable} booking={booking}
+      schedules={homepage.schedule.showTimetable ? content.schedules : undefined} close={() => setTrial(false)} />}
     {gallery !== null && <GalleryDialog index={gallery} close={() => setGallery(null)} change={setGallery} />}
   </>;
 }

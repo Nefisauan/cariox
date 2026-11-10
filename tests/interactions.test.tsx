@@ -34,6 +34,7 @@ const { default: ClassSchedule } = await import('../components/content/ClassSche
 const { default: AcademyHome } = await import('../components/AcademyHome');
 const { AcademyContentProvider } = await import('../components/content/ContentProvider');
 const { resolveAcademyContent } = await import('../lib/content/resolve');
+const { parseDateKey } = await import('../lib/academy');
 afterEach(() => { cleanup(); document.body.style.overflow = ''; });
 
 test('the published schedule switches days and filters without losing the Wednesday Gi exceptions', () => {
@@ -202,6 +203,38 @@ test('every homepage trial entry point opens the same form', async () => {
   fireEvent.click(view.getByRole('button', {name:'Let’s talk'}));
   fireEvent.click(view.container.querySelector('.chat-suggestions > button:last-child')!);
   await expectTrial();
+});
+
+test('the preferred date and class time are sent with the existing trial form', async () => {
+  const originalFetch = globalThis.fetch;
+  const schedules = [{ id: 'test-monday', day: 'Mon', time: '07:00', period: 'PM', name: 'Jiu-Jitsu', type: 'Gi' }] as const;
+  let captured: { date: string; className: string; time: string } | undefined;
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, '/api/trial');
+    captured = JSON.parse(String(init?.body)).preferredTime;
+    return Response.json({ ok: true, status: 'accepted', eventId: 'trial-12345678-1234-4123-8123-123456789abc' }, { status: 201 });
+  };
+  try {
+    const view = render(<TrialDialog available schedules={[...schedules]} close={() => {}} />);
+    const areas = view.getByRole('group', { name: /Areas of Interest/ });
+    const calendar = view.getByRole('region', { name: /Preferred class time/ });
+    assert.ok(areas.compareDocumentPosition(calendar) & dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+    const monday = () => view.getAllByRole('button', { name: /^Monday, / }).find(button => !button.hasAttribute('disabled'));
+    if (!monday()) fireEvent.click(view.getByRole('button', { name: 'Next month' }));
+    const date = monday()!;
+    fireEvent.click(date);
+    fireEvent.click(view.getByRole('button', { name: /7:00 PM.*Jiu-Jitsu/ }));
+    fireEvent.change(view.getByLabelText('Full Name'), { target: { value: 'Alex Visitor' } });
+    fireEvent.change(view.getByLabelText('Email Address'), { target: { value: 'alex@example.com' } });
+    fireEvent.change(view.getByLabelText('Phone Number'), { target: { value: '5551234567' } });
+    fireEvent.click(view.getByRole('checkbox', { name: 'Brazilian Jiu-Jitsu' }));
+    fireEvent.click(view.getByRole('button', { name: 'Request My Free Trial' }));
+    await view.findByText('Request received.');
+    assert.ok(captured);
+    assert.equal(parseDateKey(captured.date)?.toLocaleDateString('en-US', { dateStyle: 'full' }), date.getAttribute('aria-label'));
+    assert.equal(captured.className, 'Jiu-Jitsu · Gi');
+    assert.equal(captured.time, '7:00 PM');
+  } finally { globalThis.fetch = originalFetch; }
 });
 
 test('unconfigured trial dialog does not accept visitor information', () => {

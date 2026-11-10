@@ -3,22 +3,26 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { ArrowUpRight, Check, X } from 'lucide-react';
 import useModal from './useModal';
-import { TRIAL_CTA, TRIAL_INTERESTS, isTrialReceipt } from '../lib/trial/contract';
+import TrialTimePicker from './TrialTimePicker';
+import { TRIAL_CTA, TRIAL_INTERESTS, isTrialReceipt, type TrialPreference } from '../lib/trial/contract';
+import type { AcademySchedule } from '../lib/content/types';
 import { trackTrialLead } from '../lib/tracking/client';
 
 type Props = {
   close: () => void;
   available: boolean;
   booking?: { url: string; embedUrl: string };
+  schedules?: AcademySchedule[];
 };
 
-export default function TrialDialog({ close, available, booking }: Props) {
+export default function TrialDialog({ close, available, booking, schedules }: Props) {
   const dialog = useModal();
   const attempt = useRef<{ key: string; body: string } | null>(null);
   const sending = useRef(false);
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [preferredTime, setPreferredTime] = useState<TrialPreference>();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,7 +32,7 @@ export default function TrialDialog({ close, available, booking }: Props) {
     if (!interests.length) { setError('Select at least one area of interest.'); return; }
     const body = JSON.stringify({
       name: fields.get('name'), email: fields.get('email'), phone: fields.get('phone'),
-      interests, website: fields.get('website'),
+      interests, preferredTime, website: fields.get('website'),
     });
     sending.current = true;
     setBusy(true);
@@ -70,6 +74,7 @@ export default function TrialDialog({ close, available, booking }: Props) {
           <legend>Areas of Interest <small>(select all that apply)</small></legend>
           {TRIAL_INTERESTS.map(interest => <label key={interest}><input type="checkbox" name="interests" value={interest} />{interest}</label>)}
         </fieldset>
+        {available && !booking && !!schedules?.length && <TrialTimePicker schedules={schedules} preference={preferredTime} onChange={setPreferredTime} />}
         <div hidden><input name="website" tabIndex={-1} autoComplete="off" /></div>
         <p className="fine-print">We’ll use your contact details to follow up about your trial.</p>
         <button className="button gold full" type="submit">{busy ? 'Sending…' : 'Request My Free Trial'} <ArrowUpRight size={17} /></button>
