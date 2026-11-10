@@ -10,6 +10,11 @@ export const trialInput = z.strictObject({
   interests: z.array(z.enum(TRIAL_INTERESTS)).min(1).max(TRIAL_INTERESTS.length)
     .refine(values => values.length === new Set(values).size)
     .transform(values => TRIAL_INTERESTS.filter(value => values.includes(value))),
+  preferredTime: z.strictObject({
+    date: z.iso.date(),
+    className: z.string().trim().min(1).max(200).regex(/^[^\p{Cc}\p{Cf}]+$/u),
+    time: z.string().regex(/^(?:[1-9]|1[0-2]):[0-5][0-9] (?:AM|PM)$/),
+  }).optional(),
   website: z.literal('').optional(),
 });
 export type TrialInput = z.infer<typeof trialInput>;

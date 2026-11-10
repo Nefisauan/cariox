@@ -20,6 +20,7 @@ const request = (body: unknown = lead, origin = 'https://unit.example', key = 't
 function setup(send: typeof fetch) {
   const sql = new DatabaseSync(':memory:');
   sql.exec(readFileSync(new URL('../workers/trial/migrations/0001_trial_leads.sql', import.meta.url), 'utf8'));
+  sql.exec(readFileSync(new URL('../workers/trial/migrations/0002_preferred_time.sql', import.meta.url), 'utf8'));
   const database: TrialDatabase = {
     prepare(query) {
       const statement = sql.prepare(query);
@@ -65,6 +66,8 @@ test('trial delivery remains closed until the gateway is explicitly configured a
 
 test('real SQLite migration persists one row; concurrent repeats send one notification to both owners', async () => {
   let calls = 0;
+  const preferredTime = { date: '2027-02-12', className: 'Jiu-Jitsu · No-Gi', time: '7:00 PM' };
+  const submission = { ...lead, preferredTime };
   const app = setup(async (url,init) => {
     calls++;
     assert.equal(url,'https://api.resend.com/emails');
@@ -73,10 +76,11 @@ test('real SQLite migration persists one row; concurrent repeats send one notifi
     assert.deepEqual(message.to,recipients);
     assert.equal(message.reply_to,lead.email);
     for(const value of [lead.name,lead.email,lead.phone,...lead.interests]) assert.ok(message.text.includes(value));
+    for(const value of Object.values(preferredTime)) assert.ok(message.text.includes(value));
     return Response.json({id:providerId});
   });
   try {
-    const results=await Promise.all([app.gateway(request()),app.gateway(request())]);
+    const results=await Promise.all([app.gateway(request(submission)),app.gateway(request(submission))]);
     assert.deepEqual(results.map(result=>result.status),[201,201]);
     const [a,b]=await Promise.all(results.map(result=>result.json()));
     assert.ok(isTrialReceipt(a)); assert.deepEqual(a,b);
@@ -85,9 +89,10 @@ test('real SQLite migration persists one row; concurrent repeats send one notifi
     const rows=app.sql.prepare('SELECT * FROM trial_leads').all();
     assert.equal(rows.length,1);
     assert.equal(rows[0].email,lead.email);
+    assert.equal(rows[0].preferred_time,JSON.stringify(preferredTime));
     assert.equal(rows[0].notification_id,providerId);
     assert.equal(calls,1);
-    assert.equal((await app.gateway(request({...lead,name:'Different Visitor'}))).status,409);
+    assert.equal((await app.gateway(request({...submission,preferredTime:{...preferredTime,time:'5:30 AM'}}))).status,409);
   } finally { app.sql.close(); }
 });
 

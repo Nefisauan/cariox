@@ -4,6 +4,7 @@ export const TRIAL_INTERESTS = [
   'Brazilian Jiu-Jitsu', 'Self-Defense', 'Muay Thai', 'Kids Classes', "Women's Only Classes",
 ] as const;
 export type TrialInterest = typeof TRIAL_INTERESTS[number];
+export type TrialPreference = { date: string; className: string; time: string };
 export type TrialReceipt = { ok: true; status: 'accepted'; eventId: string };
 export function isTrialReceipt(value: unknown): value is TrialReceipt {
   if (!value || typeof value !== 'object') return false;

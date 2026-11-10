@@ -3,7 +3,7 @@ import { trialInput, type TrialInput } from '../../lib/trial/input';
 import { sendTrialNotification, trialDeliveryConfig, type DeliveryConfig } from '../../lib/trial/delivery';
 
 export interface TrialStatement {
-  bind(...params: (string | number)[]): TrialStatement;
+  bind(...params: (string | number | null)[]): TrialStatement;
   first<T>(): Promise<T | null>;
   all<T>(): Promise<{ results: T[]; success: boolean }>;
   run(): Promise<{ success: boolean }>;
@@ -17,7 +17,8 @@ type Env = {
   TRIAL_NOTIFY_EMAILS?: string;
 };
 type Context = { waitUntil(work: Promise<unknown>): void };
-type Row = { submission_key: string; event_id: string; name: string; email: string; phone: string; interests: string };
+type Row = { submission_key: string; event_id: string; name: string; email: string; phone: string; interests: string; preferred_time: string | null };
+const leadColumns = 'submission_key,event_id,name,email,phone,interests,preferred_time';
 const currentTime = () => Math.floor(Date.now() / 1000);
 const retryWindow = 23 * 60 * 60;
 const due = 'notification_id IS NULL AND next_attempt_at <= ? AND attempts < 8 AND (first_attempt_at IS NULL OR first_attempt_at > ?)';
@@ -37,8 +38,9 @@ async function rateLimit(db: TrialDatabase, bucket: string, now: number) {
   if (!rate || rate.hits > 6) throw new ServiceError(429,'TRY_LATER','Please try again in a few minutes.');
 }
 
-function matches(row: Row, input: TrialInput) {
-  return row.name === input.name && row.email === input.email && row.phone === input.phone && row.interests === JSON.stringify(input.interests);
+function matches(row: Row, input: TrialInput, preference: string | null) {
+  return row.name === input.name && row.email === input.email && row.phone === input.phone
+    && row.interests === JSON.stringify(input.interests) && row.preferred_time === preference;
 }
 
 export function createTrialWorker({ send = fetch.bind(globalThis), now = currentTime } = {}) {
@@ -52,7 +54,10 @@ export function createTrialWorker({ send = fetch.bind(globalThis), now = current
         WHERE submission_key = ? AND ${due} RETURNING event_id`)
         .bind(time, time, row.submission_key, time, time - retryWindow).first();
       if (!claim) return;
-      const input = trialInput.parse({ name:row.name, email:row.email, phone:row.phone, interests:JSON.parse(row.interests) });
+      const input = trialInput.parse({
+        name: row.name, email: row.email, phone: row.phone, interests: JSON.parse(row.interests),
+        preferredTime: row.preferred_time === null ? undefined : JSON.parse(row.preferred_time),
+      });
       const notificationId = await sendTrialNotification(settings, row.event_id, input, send);
       const marked = await env.LEADS_DB.prepare('UPDATE trial_leads SET notification_id = ?, notified_at = ? WHERE submission_key = ?')
         .bind(notificationId, now(), row.submission_key).run();
@@ -79,20 +84,21 @@ export function createTrialWorker({ send = fetch.bind(globalThis), now = current
         const key = idempotencyKey(request);
         const input = await readInput(request, trialInput);
         const db = env.LEADS_DB;
-        const find = () => db.prepare('SELECT submission_key,event_id,name,email,phone,interests FROM trial_leads WHERE submission_key = ?').bind(key).first<Row>();
+        const preference = input.preferredTime ? JSON.stringify(input.preferredTime) : null;
+        const find = () => db.prepare(`SELECT ${leadColumns} FROM trial_leads WHERE submission_key = ?`).bind(key).first<Row>();
         let row = await find();
         if (!row) {
           const ip = request.headers.get('x-trial-client-ip');
           // Missing gateway IPs share a conservative bucket instead of bypassing the limit.
           await rateLimit(db, await rateBucket(secret, ip || 'unknown'), now());
-          const saved = await db.prepare(`INSERT INTO trial_leads(submission_key,event_id,name,email,phone,interests,created_at)
-            VALUES (?,?,?,?,?,?,?) ON CONFLICT(submission_key) DO NOTHING`)
-            .bind(key, `trial-${crypto.randomUUID()}`, input.name, input.email, input.phone, JSON.stringify(input.interests), now()).run();
+          const saved = await db.prepare(`INSERT INTO trial_leads(${leadColumns},created_at)
+            VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(submission_key) DO NOTHING`)
+            .bind(key, `trial-${crypto.randomUUID()}`, input.name, input.email, input.phone, JSON.stringify(input.interests), preference, now()).run();
           if (!saved.success) throw new Error('Could not save trial');
           row = await find();
         }
         if (!row) throw new Error('Saved trial could not be read');
-        if (!matches(row,input)) throw new ServiceError(409,'KEY_CONFLICT','Start a new request and try again.');
+        if (!matches(row,input,preference)) throw new ServiceError(409,'KEY_CONFLICT','Start a new request and try again.');
         ctx.waitUntil(notify(env, settings, row));
         return json({ok:true,status:'accepted',eventId:row.event_id},201);
       });
@@ -102,7 +108,7 @@ export function createTrialWorker({ send = fetch.bind(globalThis), now = current
       if (!settings || !env.LEADS_DB) return;
       const time = now();
       await env.LEADS_DB.prepare('DELETE FROM trial_rate_limits WHERE expires_at <= ?').bind(time).run();
-      const rows = await env.LEADS_DB.prepare(`SELECT submission_key,event_id,name,email,phone,interests FROM trial_leads
+      const rows = await env.LEADS_DB.prepare(`SELECT ${leadColumns} FROM trial_leads
         WHERE ${due} ORDER BY next_attempt_at LIMIT 10`).bind(time, time - retryWindow).all<Row>();
       if (!rows.success) throw new Error('Could not load pending notifications');
       for (const row of rows.results) await notify(env, settings, row);

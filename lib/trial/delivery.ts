@@ -14,6 +14,7 @@ export function trialDeliveryConfig(env: Record<string, string | undefined>): De
 }
 
 export async function sendTrialNotification(settings: DeliveryConfig, eventId: string, input: TrialInput, send: typeof fetch) {
+  const preference = input.preferredTime;
   const response = await send('https://api.resend.com/emails', {
     method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(8000),
     headers: { Authorization: `Bearer ${settings.apiKey}`, 'Content-Type': 'application/json', 'Idempotency-Key': `cariox-trial/${eventId}` },
@@ -24,6 +25,8 @@ export async function sendTrialNotification(settings: DeliveryConfig, eventId: s
         'A visitor requested a free trial class. Please contact them to coordinate their first class.',
         '', `Full name: ${input.name}`, `Email: ${input.email}`, `Phone: ${input.phone}`,
         '', 'Areas of interest:', ...input.interests.map(value => `- ${value}`),
+        ...(preference ? ['', `Preferred class: ${preference.className}`, `Preferred date: ${preference.date}`,
+          `Preferred time: ${preference.time} (academy local time)`, 'Please confirm the date and time with the visitor.'] : []),
         '', `Request reference: ${eventId}`,
       ].join('\n'),
     }),
