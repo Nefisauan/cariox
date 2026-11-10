@@ -38,8 +38,12 @@ function setup(send: typeof fetch) {
   const env = { LEADS_DB:database, TRIAL_WORKER_SECRET:secret, RESEND_API_KEY:'fixture', TRIAL_FROM_EMAIL:from, TRIAL_NOTIFY_EMAILS:recipients.join(',') };
   const jobs: Promise<unknown>[] = [];
   const ctx = { waitUntil: (task:Promise<unknown>) => { jobs.push(task); } };
-  const gateway = createTrialGateway({config:()=>settings,clientIp:()=>'192.0.2.12',
-    send:async (url, init)=>worker.fetch(new Request(url,init),env,ctx)});
+  const service = { fetch: (request: Request) => worker.fetch(request, env, ctx) };
+  const gateway = createTrialGateway({
+    config: () => trialGatewayConfig({ TRIAL_LEADS_ENABLED:'true', TRIAL_WORKER_SECRET:secret }, service),
+    clientIp: () => '192.0.2.12',
+    send: async () => assert.fail('The Cloudflare gateway must use its private Worker binding'),
+  });
   return { sql, gateway, worker, env, ctx, drain:()=>Promise.all(jobs.splice(0)), advance:(seconds:number)=>{now += seconds;} };
 }
 
@@ -48,6 +52,10 @@ test('trial delivery remains closed until the gateway is explicitly configured a
   const env = { TRIAL_LEADS_ENABLED:'true', TRIAL_WORKER_URL:settings.url, TRIAL_WORKER_SECRET:secret };
   assert.deepEqual(trialGatewayConfig(env),settings);
   assert.equal(trialGatewayConfig({...env,TRIAL_WORKER_URL:'http://worker.example/trial'}),null);
+  const service = { fetch: async () => new Response() };
+  assert.equal(trialGatewayConfig({...env,TRIAL_LEADS_ENABLED:'false'},service),null);
+  assert.equal(trialGatewayConfig({...env,TRIAL_WORKER_SECRET:'invalid'},service),null);
+  assert.equal(trialGatewayConfig(env,service)?.service,service);
   assert.equal(trialDeliveryConfig({RESEND_API_KEY:'fixture',TRIAL_FROM_EMAIL:from,TRIAL_NOTIFY_EMAILS:'owner@example.com,OWNER@example.com'}),null);
   const gateway = createTrialGateway({config:()=>null,send:async()=>assert.fail('Unconfigured gateway called a provider')});
   const response = await gateway(request());

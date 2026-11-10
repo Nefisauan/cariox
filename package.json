@@ -17,7 +17,8 @@
     "audit:design": "node scripts/check-design-parity.mjs",
     "studio:prepare-content": "node --import tsx scripts/prepare-sanity-content.ts",
     "studio:deploy": "node scripts/check-sanity-env.mjs && DO_NOT_TRACK=1 sanity deploy",
-    "cf:deploy": "WRANGLER_SEND_METRICS=false opennextjs-cloudflare deploy"
+    "cf:deploy": "WRANGLER_SEND_METRICS=false opennextjs-cloudflare deploy",
+    "cf:trial:deploy": "WRANGLER_SEND_METRICS=false wrangler deploy --config wrangler.trial.jsonc"
   },
   "dependencies": {
     "@sanity/client": "^8.15.0",
