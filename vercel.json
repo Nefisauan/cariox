@@ -1,8 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
-    "deploymentEnabled": {
-      "codex/cloudflare-cms-meta-readiness": false
-    }
+    "deploymentEnabled": false
   }
 }

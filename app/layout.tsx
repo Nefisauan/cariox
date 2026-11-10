@@ -4,8 +4,8 @@ import MarketingConsent from '../components/tracking/MarketingConsent';
 import { getAcademyContent } from '../lib/content/load';
 import { getPublicSiteUrl } from '../lib/config/site';
 
-// This production origin was verified during the client-authorized Vercel release.
-const siteUrl = getPublicSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? new URL('https://cariox-smoky.vercel.app');
+// The Cloudflare-assigned hostname is the production origin until a custom domain is configured.
+const siteUrl = getPublicSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? new URL('https://cariox.evan-7a6.workers.dev');
 
 const baseMetadata: Metadata = {
   metadataBase: siteUrl,

@@ -2,7 +2,7 @@
 
 Existing Next.js / React / TypeScript academy design, with account-independent Cloudflare, Sanity CMS, and Meta tracking readiness on `codex/cloudflare-cms-meta-readiness`.
 
-The original 3D/perspective interactions, photography, responsive CSS, and fallback content are preserved. The client subsequently authorized Vercel production deployment through `main`. Vercel Git deployments remain disabled only for the feature branch. No external accounts were created.
+The original 3D/perspective interactions, photography, responsive CSS, and fallback content are preserved. Cloudflare Workers Builds deploys `main` to the `cariox` Worker. Vercel Git deployments are disabled. See [Cloudflare hosting setup](./CLOUDFLARE_SETUP.md).
 
 The official green-and-gold logo supplied in the class schedule now replaces the prior text-only marks in the website UI, browser icons, share image, and concept mockups. See [brand assets and edit provenance](./docs/brand-update.md).
 
