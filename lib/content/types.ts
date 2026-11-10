@@ -8,17 +8,19 @@ export type AcademyProgram = z.infer<typeof programSchema>;
 export const faqSchema = z.object({ question: text, answer: text });
 export type AcademyFaq = z.infer<typeof faqSchema>;
 export const headingSchema = z.object({ title: text, accent: text });
+const bookingLink = z.url().refine(value => {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && !url.username && !url.password;
+  } catch { return false; }
+}, 'Use a public HTTPS booking link');
 export const homepageSchema = z.object({
   heroEyebrow: text.max(120), heroTitle: z.array(text.max(40)).length(3), heroDescription: text.max(500), secondaryCta: text.max(60),
   about: headingSchema.extend({ eyebrow: text, accentPrefix: z.string().max(100).optional(), lead: text, body: text, imageCaption: text }),
   programs: headingSchema.extend({ description: text }),
   schedule: headingSchema.extend({ description: text, showTimetable: z.boolean() }),
-  bookingUrl: z.url().refine(value => {
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' && !url.username && !url.password;
-    } catch { return false; }
-  }, 'Use a public HTTPS booking link').optional(),
+  bookingUrl: bookingLink.optional(),
+  bookingEmbedUrl: bookingLink.optional(),
   team: headingSchema.extend({ body: text }),
   culture: headingSchema.extend({ eyebrow: text, body: text, quote: text }),
   contact: headingSchema.extend({ eyebrow: text, body: text }),

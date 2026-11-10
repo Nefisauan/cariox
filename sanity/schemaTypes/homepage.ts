@@ -17,6 +17,11 @@ export const homepage = defineType({ name: 'homepage', title: 'Homepage', type: 
         description: 'Paste the HTTPS link visitors use to choose a class and time.',
         validation: rule => rule.uri({ scheme: ['https'] }),
       }),
+      defineField({
+        name: 'embedUrl', title: 'Calendar embed link', type: 'url',
+        description: 'Optional. Paste the HTTPS iframe URL from the provider’s embed settings. This shows the calendar inside the trial dialog, with the public booking page as a backup.',
+        validation: rule => rule.uri({ scheme: ['https'] }),
+      }),
       defineField({ name: 'enabled', title: 'Enable online class booking', type: 'boolean', initialValue: false }),
     ],
     validation: rule => rule.custom(value => {

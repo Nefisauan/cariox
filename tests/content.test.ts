@@ -66,19 +66,25 @@ test('published GROQ query parses offline',()=>{assert.ok(parse(ACADEMY_QUERY));
 test('published booking settings activate only with an enabled public HTTPS link', async () => {
   const query = parse(ACADEMY_QUERY);
   const bookingUrl = 'https://book.example/trial?class=jiu-jitsu';
-  const project = async (trialBooking?: { enabled: boolean; url?: string }) => {
+  const embedUrl = 'https://book.example/embed/trial';
+  const project = async (trialBooking?: { enabled: boolean; url?: string; embedUrl?: string }) => {
     const result = await evaluate(query, { dataset: [{ _id: 'homepage', _type: 'homepage', trialBooking }] });
     return resolveAcademyContent(await result.get());
   };
 
   assert.equal((await project()).homepage.bookingUrl, undefined);
-  assert.equal((await project({ enabled: false, url: bookingUrl })).homepage.bookingUrl, undefined);
+  const disabled = await project({ enabled: false, url: bookingUrl, embedUrl });
+  assert.equal(disabled.homepage.bookingUrl, undefined);
+  assert.equal(disabled.homepage.bookingEmbedUrl, undefined);
   for (const url of [undefined, 'not a url', 'javascript:alert(1)', 'http://book.example', 'https://user:password@book.example']) {
     assert.equal((await project({ enabled: true, url })).homepage.bookingUrl, undefined);
   }
 
   const published = await project({ enabled: true, url: bookingUrl });
   assert.equal(published.homepage.bookingUrl, bookingUrl);
+  assert.equal(published.homepage.bookingEmbedUrl, undefined);
+  assert.equal((await project({ enabled: true, url: bookingUrl, embedUrl })).homepage.bookingEmbedUrl, embedUrl);
+  assert.equal((await project({ enabled: true, url: bookingUrl, embedUrl: 'data:text/html,<script></script>' })).homepage.bookingEmbedUrl, undefined);
   assert.match(published.homepage.schedule.description, /booking page/);
   assert.match(published.faqs.find(faq => faq.question === 'How do I schedule a free trial?')!.answer, /confirm your reservation/);
 });

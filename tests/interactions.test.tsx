@@ -223,6 +223,25 @@ test('an enabled booking link takes the trial CTA to the configured page', () =>
   }
 });
 
+test('the trial CTA opens the embedded calendar with the public page and request form available', async () => {
+  const bookingUrl = 'https://book.example/trial';
+  const bookingEmbedUrl = 'https://book.example/embed/trial';
+  const content = resolveAcademyContent({ homepage: { bookingUrl, bookingEmbedUrl } });
+  const view = render(<AcademyContentProvider content={content}><AcademyHome trialAvailable /></AcademyContentProvider>);
+  assert.equal(view.queryByTitle('CARIOX trial class booking calendar'), null);
+
+  fireEvent.click(view.container.querySelector('.header-cta')!);
+  const dialog = await view.findByRole('dialog', { name: 'Schedule Your Free Trial Class' });
+  assert.equal(view.getByTitle('CARIOX trial class booking calendar').getAttribute('src'), bookingEmbedUrl);
+  assert.equal(view.getByRole('link', { name: 'Open the booking page' }).getAttribute('href'), bookingUrl);
+  const request = dialog.querySelector('details')!;
+  assert.equal(request.open, false);
+  fireEvent.click(view.getByText('Prefer help choosing a class? Send a trial request'));
+  assert.equal(request.open, true);
+  assert.ok(view.getByRole('checkbox', { name: 'Brazilian Jiu-Jitsu' }));
+  assert.ok(view.getByRole('button', { name: 'Request My Free Trial' }));
+});
+
 test('mobile navigation labels its dialog and restores scroll state after selecting a section', () => {
   const view = render(<Navigation openTrial={() => {}} />);
   // JSDOM has no responsive layout engine; expose the mobile trigger for its behavior test.

@@ -2,7 +2,11 @@ import { defineQuery } from 'groq';
 import type { HomepageContent, Branding, AcademyPhoto, AcademyProgram, Instructor, AcademySchedule, MembershipPrice, BusinessInformation, Announcement, AcademyFaq } from '../content/types';
 // Published perspective is also enforced by the client. No draft/preview token is exposed.
 export const ACADEMY_QUERY = defineQuery(`{
-  "homepage": *[_type == "homepage" && _id == "homepage"][0]{heroEyebrow,heroTitle,heroDescription,secondaryCta,about,programs,schedule,team,culture,contact,seo,"bookingUrl":select(trialBooking.enabled == true => trialBooking.url)},
+  "homepage": *[_type == "homepage" && _id == "homepage"][0]{
+    heroEyebrow,heroTitle,heroDescription,secondaryCta,about,programs,schedule,team,culture,contact,seo,
+    "bookingUrl":select(trialBooking.enabled == true => trialBooking.url),
+    "bookingEmbedUrl":select(trialBooking.enabled == true => trialBooking.embedUrl)
+  },
   "branding": *[_type == "branding" && _id == "branding"][0]{wordmarkLeft,wordmarkRight,tagline,affiliation,"logoUrl":logo.asset->url},
   "photos": *[_type == "academyPhoto" && enabled == true] {key,title,label,description,alt,tab,"url":image.asset->url},
   "programs": *[_type == "program" && active == true && confirmed == true] | order(order asc) {title,tag,body},

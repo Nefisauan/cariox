@@ -484,6 +484,14 @@ dialog::backdrop{background:#0b170edb;backdrop-filter:blur(8px)}
 .trial-interests label{display:flex;align-items:center;gap:8px;min-height:42px;font-size:12px}
 .trial-dialog .trial-interests input{appearance:auto;display:inline-block;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:var(--green);flex-shrink:0}
 .trial-dialog .booking-done [role=status] p{margin:8px 0 16px}
+.trial-dialog-calendar{width:900px}
+.trial-request-option{margin:0 0 20px;border-bottom:1px solid #bac6ac;padding-bottom:8px}
+.trial-request-option summary{cursor:pointer;align-content:center;min-height:44px;font-size:14px}
+.trial-request-option form{max-width:480px;margin-bottom:12px}
+.trial-calendar-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 16px;margin-bottom:8px}
+.trial-calendar-header h3{font-size:24px}
+.trial-calendar-header a{min-height:44px}
+.trial-calendar iframe{display:block;width:100%;height:clamp(460px,68dvh,750px);background:#fff;border:1px solid #bac6ac}
 .trial-nav-short{display:none}
 .class-title>p{font-size:12px;color:var(--muted)}
 @media(max-width:1100px){.trial-nav-long{display:none}.trial-nav-short{display:inline}}
