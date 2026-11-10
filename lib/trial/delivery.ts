@@ -15,7 +15,7 @@ export function trialDeliveryConfig(env: Record<string, string | undefined>): De
 
 export async function sendTrialNotification(settings: DeliveryConfig, eventId: string, input: TrialInput, send: typeof fetch) {
   const response = await send('https://api.resend.com/emails', {
-    method: 'POST', redirect: 'error', signal: AbortSignal.timeout(8000),
+    method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(8000),
     headers: { Authorization: `Bearer ${settings.apiKey}`, 'Content-Type': 'application/json', 'Idempotency-Key': `cariox-trial/${eventId}` },
     body: JSON.stringify({
       from: settings.from, to: settings.recipients, reply_to: input.email,

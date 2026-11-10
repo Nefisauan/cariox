@@ -35,7 +35,7 @@ export function createTrialGateway({
     const input = await readInput(request, trialInput);
     const ip = clientIp(request);
     const init: RequestInit = {
-      method: 'POST', credentials: 'omit', redirect: 'error', cache: 'no-store', signal: AbortSignal.timeout(8000),
+      method: 'POST', credentials: 'omit', redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(8000),
       headers: {
         Authorization: `Bearer ${settings.secret}`, 'Content-Type': 'application/json', 'Idempotency-Key': key,
         ...(ip && /^[\da-fA-F:.]{3,64}$/.test(ip) ? { 'X-Trial-Client-IP': ip } : {}),
