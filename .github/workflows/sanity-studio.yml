@@ -1,0 +1,64 @@
+name: Publish CARIOX Studio
+
+on:
+  workflow_dispatch:
+    inputs:
+      studio_hostname:
+        description: Sanity Studio subdomain (without .sanity.studio)
+        required: true
+        type: string
+      seed_content:
+        description: Import website content and images, skipping existing document IDs
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency: cariox-sanity-production
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SANITY_STUDIO_PROJECT_ID: bj74aamw
+      SANITY_STUDIO_DATASET: production
+      STUDIO_HOSTNAME: ${{ inputs.studio_hostname }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install locked dependencies
+        run: |
+          npm install --global "$(node -p 'require("./package.json").packageManager')"
+          npm ci
+      - name: Check the release configuration
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          node scripts/check-sanity-env.mjs
+          [[ "$STUDIO_HOSTNAME" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]]
+          if [[ -z "$SANITY_AUTH_TOKEN" ]]; then
+            echo '::error::Add the project-scoped SANITY_AUTH_TOKEN GitHub Actions secret.'
+            exit 1
+          fi
+      - name: Import missing website content
+        if: inputs.seed_content
+        env:
+          SANITY_IMPORT_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DO_NOT_TRACK: '1'
+        run: |
+          npm run studio:prepare-content
+          npx --no-install sanity datasets import .sanity/cariox-seed.ndjson --project "$SANITY_STUDIO_PROJECT_ID" --dataset "$SANITY_STUDIO_DATASET" --missing
+      - name: Publish the Studio
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: npm run studio:deploy -- --url "$STUDIO_HOSTNAME" --yes --schema-required
