@@ -17,7 +17,11 @@ export default function InstructorSection() {
       <DepthSurface className="instructor-portrait reveal" strength={5}>
         <figure>
           <Image src={person.photoUrl} alt={person.photoAlt} width={1320} height={1615} sizes="(max-width: 600px) 90vw, 44vw" />
-          <figcaption><span className="instructor-brand"><BrandLogo src={branding.logoUrl} decorative /></span><span>{branding.affiliation}</span></figcaption>
+          <figcaption>
+            {/* Keep the decorative logo out of the caption’s accessible name. */}
+            <span className="instructor-brand" aria-hidden="true"><BrandLogo src={branding.logoUrl} decorative /></span>
+            <span>{branding.affiliation}</span>
+          </figcaption>
         </figure>
       </DepthSurface>
       <div className="instructor-details reveal">
