@@ -9,6 +9,10 @@
     { "binding": "WORKER_SELF_REFERENCE", "service": "cariox" },
     { "binding": "TRIAL_SERVICE", "service": "cariox-trial" }
   ],
+  "vars": {
+    "NEXT_PUBLIC_SANITY_PROJECT_ID": "bj74aamw",
+    "NEXT_PUBLIC_SANITY_DATASET": "production"
+  },
   "workers_dev": true,
   "preview_urls": false,
   "observability": { "enabled": false }
