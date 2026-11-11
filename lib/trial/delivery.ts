@@ -7,8 +7,8 @@ export function trialDeliveryConfig(env: Record<string, string | undefined>): De
   const apiKey = env.RESEND_API_KEY?.trim();
   const from = env.TRIAL_FROM_EMAIL?.trim() ?? '';
   const recipients = env.TRIAL_NOTIFY_EMAILS?.split(',').map(value => value.trim()) ?? [];
-  if (!apiKey || !emailAddress.safeParse(from).success || recipients.length !== 2
-    || new Set(recipients.map(value => value.toLowerCase())).size !== 2
+  if (!apiKey || !emailAddress.safeParse(from).success || recipients.length === 0
+    || new Set(recipients.map(value => value.toLowerCase())).size !== recipients.length
     || recipients.some(value => !emailAddress.safeParse(value).success)) return null;
   return { apiKey, from, recipients };
 }

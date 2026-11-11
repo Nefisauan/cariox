@@ -1,13 +1,13 @@
 # CARIOX launch setup
 
-The website deploys to the `cariox` Cloudflare Worker. See [hosting setup](./CLOUDFLARE_SETUP.md). Trial requests go through the existing site origin to an authenticated Cloudflare Worker. The Worker saves each request to private D1 storage before returning a confirmation, then sends one email addressed to both owners through Resend. A failed email leaves the saved request available for recovery. The site and all tracking work in a safe disabled state until their respective services are configured.
+The website deploys to the `cariox` Cloudflare Worker. See [hosting setup](./CLOUDFLARE_SETUP.md). Trial requests go through the existing site origin to an authenticated Cloudflare Worker. The Worker saves each request to private D1 storage before returning a confirmation, then sends one email addressed to the configured owners through Resend. A failed email leaves the saved request available for recovery. The site and all tracking work in a safe disabled state until their respective services are configured.
 
 ## 1. Save leads and deliver email
 
 1. The repository's `wrangler.trial.jsonc` points to the production `cariox-trials` D1 database. Apply `0001_trial_leads.sql` and `0002_preferred_time.sql` in order before deploying the trial Worker. For a separate test environment, copy `wrangler.trial.example.jsonc` to the ignored `wrangler.trial.local.jsonc`, change the Worker name and set the test database name and ID. Apply migrations with `npx wrangler d1 migrations apply LEADS_DB --remote --config wrangler.trial.local.jsonc` from an authenticated Wrangler CLI. Keep D1 access limited to authorized operators. [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/).
 2. The production `cariox-trial` Worker is deployed from `Nefisauan/cariox` through Cloudflare Workers Builds. Its production branch is `main`, its build command is `npm run typecheck`, and its deploy command is `npm run cf:trial:deploy`. Preview builds are off. The Worker has no public URL and has a ten-minute email retry trigger. The website's `wrangler.jsonc` defines its private `TRIAL_SERVICE` binding. [Cloudflare service bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/).
 3. Open a gym-owned [Resend account](https://resend.com/). Add a sending domain or subdomain that the gym controls; add the DNS records shown by Resend and wait for verification. Create a key restricted to sending from that verified domain. Pick a sender address on the domain. The recipients can use any valid email domain. [Resend domain verification](https://resend.com/docs/dashboard/domains/introduction).
-4. Generate a unique shared secret with `openssl rand -hex 32`. Keep it in a password manager. Set the trial Worker's secrets in **Settings → Variables and Secrets**, or run `npx wrangler secret put VARIABLE_NAME --config wrangler.trial.jsonc` for each secret. Use the two recipient addresses already supplied in chat, separated by one comma. Never paste the key or secret into chat or commit it.
+4. Generate a unique shared secret with `openssl rand -hex 32`. Keep it in a password manager. Set the trial Worker's secrets in **Settings → Variables and Secrets**, or run `npx wrangler secret put VARIABLE_NAME --config wrangler.trial.jsonc` for each secret. Set the owner-approved notification recipients, separated by commas if there is more than one. Never paste the key or secret into chat or commit it.
 
    | Worker setting | Value |
    | --- | --- |
@@ -15,10 +15,10 @@ The website deploys to the `cariox` Cloudflare Worker. See [hosting setup](./CLO
    | `TRIAL_WORKER_SECRET` | Shared secret used only by the site server and Worker |
    | `RESEND_API_KEY` | Domain-scoped sending key |
    | `TRIAL_FROM_EMAIL` | Plain sender address on the verified domain |
-   | `TRIAL_NOTIFY_EMAILS` | Two distinct owner addresses, comma-separated |
+   | `TRIAL_NOTIFY_EMAILS` | One or more distinct owner addresses, comma-separated |
 
 5. Set `TRIAL_WORKER_SECRET` as a runtime secret on the website Worker with the same value as on the trial Worker. Leave `TRIAL_WORKER_URL` unset on Cloudflare. Keep production closed during testing. In the test environment, use the corresponding test Worker binding and set `TRIAL_LEADS_ENABLED=true` as a runtime setting. If setting the flag in the dashboard, use a secret so subsequent Git deployments retain it. Keep Resend credentials and recipients on the trial Worker only.
-6. Submit a real test lead with permission, choosing more than one interest. Confirm the visitor sees the coordination message, D1 has one row, and both inboxes receive the details. In Resend, check delivery or bounce status for each recipient; the Worker’s accepted notification ID does not guarantee inbox delivery. Repeat an identical test request with the same idempotency key to check it still has one row and one notification. Turn the production feature flag on and redeploy only after the configured flow is verified.
+6. Submit a real test lead with permission, choosing more than one interest. Confirm the visitor sees the coordination message, D1 has one row, and the configured recipients receive the details. In Resend, check delivery or bounce status for each recipient; the Worker’s accepted notification ID does not guarantee inbox delivery. Repeat an identical test request with the same idempotency key to check it still has one row and one notification. Turn the production feature flag on and redeploy only after the configured flow is verified.
 
 Inspect status in the D1 console without retrieving contact details:
 

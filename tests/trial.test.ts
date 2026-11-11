@@ -48,7 +48,7 @@ function setup(send: typeof fetch) {
   return { sql, gateway, worker, env, ctx, drain:()=>Promise.all(jobs.splice(0)), advance:(seconds:number)=>{now += seconds;} };
 }
 
-test('trial delivery remains closed until the gateway is explicitly configured and requires two recipients', async () => {
+test('trial delivery requires configuration and permits one owner recipient', async () => {
   assert.equal(trialGatewayConfig({}), null);
   const env = { TRIAL_LEADS_ENABLED:'true', TRIAL_WORKER_URL:settings.url, TRIAL_WORKER_SECRET:secret };
   assert.deepEqual(trialGatewayConfig(env),settings);
@@ -57,11 +57,32 @@ test('trial delivery remains closed until the gateway is explicitly configured a
   assert.equal(trialGatewayConfig({...env,TRIAL_LEADS_ENABLED:'false'},service),null);
   assert.equal(trialGatewayConfig({...env,TRIAL_WORKER_SECRET:'invalid'},service),null);
   assert.equal(trialGatewayConfig(env,service)?.service,service);
+  assert.equal(trialDeliveryConfig({RESEND_API_KEY:'fixture',TRIAL_FROM_EMAIL:from,TRIAL_NOTIFY_EMAILS:''}),null);
+  assert.equal(trialDeliveryConfig({RESEND_API_KEY:'fixture',TRIAL_FROM_EMAIL:from,TRIAL_NOTIFY_EMAILS:'invalid'}),null);
+  assert.deepEqual(trialDeliveryConfig({RESEND_API_KEY:'fixture',TRIAL_FROM_EMAIL:from,TRIAL_NOTIFY_EMAILS:recipients[0]})?.recipients,[recipients[0]]);
   assert.equal(trialDeliveryConfig({RESEND_API_KEY:'fixture',TRIAL_FROM_EMAIL:from,TRIAL_NOTIFY_EMAILS:'owner@example.com,OWNER@example.com'}),null);
   const gateway = createTrialGateway({config:()=>null,send:async()=>assert.fail('Unconfigured gateway called a provider')});
   const response = await gateway(request());
   assert.equal(response.status,503);
   assert.equal(isTrialReceipt(await response.json()),false);
+});
+
+test('removing a recipient still saves a trial and sends only to the remaining owner', async () => {
+  let sent = 0;
+  const app = setup(async (_url, init) => {
+    const email = JSON.parse(String(init?.body));
+    assert.deepEqual(email.to, [recipients[0]]);
+    assert.equal(email.from, from);
+    sent++;
+    return Response.json({ id: providerId });
+  });
+  app.env.TRIAL_NOTIFY_EMAILS = recipients[0];
+  try {
+    assert.equal((await app.gateway(request())).status, 201);
+    await app.drain();
+    assert.equal(sent, 1);
+    assert.equal(app.sql.prepare('SELECT notification_id FROM trial_leads').get()?.notification_id, providerId);
+  } finally { app.sql.close(); }
 });
 
 test('real SQLite migration persists one row; concurrent repeats send one notification to both owners', async () => {
