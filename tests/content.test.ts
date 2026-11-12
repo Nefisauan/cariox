@@ -10,10 +10,11 @@ import { ACADEMY_QUERY } from '../lib/sanity/queries';
 import { getPublicSiteUrl } from '../lib/config/site';
 import { evaluate, parse } from 'groq-js';
 import { Schema } from '@sanity/schema';
+import { defaultNavigation } from '../lib/content/navigation';
 
 test('all required CMS schema types compile without an account',()=>{
   const names: string[]=schemaTypes.map(type=>type.name);
-  for(const name of ['homepage','branding','academyPhoto','program','classDefinition','instructor','schedule','membershipPrice','businessInformation','announcement','faq'])assert.ok(names.includes(name));
+  for(const name of ['homepage','navigation','branding','academyPhoto','program','classDefinition','instructor','schedule','membershipPrice','businessInformation','announcement','faq'])assert.ok(names.includes(name));
   const schema=Schema.compile({name:'offline-schema-test',types:schemaTypes});
   for(const name of names)assert.ok(schema.get(name));
 });
@@ -27,12 +28,32 @@ test('missing or empty CMS content retains existing content and photograph slots
   assert.equal(resolveAcademyContent(null),fallbackContent);
   const resolved=resolveAcademyContent({});
   assert.deepEqual(resolved.homepage,fallbackContent.homepage);
+  assert.deepEqual(resolved.navigation,defaultNavigation);
   assert.deepEqual(resolved.photos,fallbackContent.photos);
   assert.deepEqual(resolved.programs,fallbackContent.programs);
   assert.deepEqual(resolved.instructors,fallbackContent.instructors);
   assert.equal(resolved.programsConfirmed,true);assert.equal(resolved.scheduleConfirmed,true);
   assert.deepEqual(resolved.schedules,fallbackContent.schedules);
   assert.ok(homepageSchema.safeParse(fallbackContent.homepage).success);
+});
+
+test('published navigation edits keep valid routes and fall back from invalid destinations', async () => {
+  const navigation = {
+    _type: 'navigation', _id: 'navigation',
+    links: [{ label: 'Our academy', href: '#about' }, { label: 'Class times', href: '#schedule' }],
+    buttonText: 'Book your first class', buttonShortText: 'Book a class', buttonUrl: 'https://book.example/trial',
+  };
+  const query = await evaluate(parse(ACADEMY_QUERY), { dataset: [navigation] });
+  const content = resolveAcademyContent(await query.get());
+  assert.equal(content.navigation.links[0].label, 'Our academy');
+  assert.equal(content.navigation.links[0].href, '#about');
+  assert.equal(content.navigation.buttonUrl, navigation.buttonUrl);
+  for (const href of ['javascript:alert(1)', '#missing-section', 'https://user:password@book.example', 'http://book.example']) {
+    const invalid = resolveAcademyContent({ navigation: { ...navigation, links: [{ label: 'Invalid', href }], buttonUrl: href } });
+    assert.deepEqual(invalid.navigation.links, defaultNavigation.links);
+    assert.equal(invalid.navigation.buttonUrl, undefined);
+  }
+  assert.equal(resolveAcademyContent({ navigation: { ...navigation, buttonUrl: '' } }).navigation.buttonUrl, undefined);
 });
 test('supplied instructor results survive empty or invalid CMS data and approved profiles can replace them',()=>{
   for (const instructors of [[], [{id:'invalid',achievements:[{event:'Invalid result',placement:0}]}]]) {

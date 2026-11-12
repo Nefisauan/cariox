@@ -1,8 +1,10 @@
 import type { AcademyContent } from './types';
 import { publishedSchedule } from './schedule';
 import { OFFICIAL_LOGO_URL } from '../branding';
+import { defaultNavigation } from './navigation';
 export const fallbackContent: AcademyContent = {
   source: 'fallback', faqsConfirmed: false, programsConfirmed: true, scheduleConfirmed: true,
+  navigation: defaultNavigation,
   homepage: {
     heroEyebrow: 'BRAZILIAN JIU-JITSU · SALOMÃO BJJ TEAM', heroTitle: ['MORE THAN', 'A MARTIAL ART.', 'A WAY FORWARD.'], heroDescription: 'Find your strength. Build your confidence.\nBecome more, on and off the mat.', secondaryCta: 'Explore the academy',
     about: { eyebrow: 'ROOTED IN SOMETHING REAL', title: 'Leave your ego.', accent: 'everything.', accentPrefix: 'Bring your', lead: 'Jiu-Jitsu begins with a simple decision: to show up. To be a beginner. To discover what you’re capable of.', body: 'CARIOX brings Brazilian martial arts into a space made for connection. Rooted in the Salomão BJJ Team identity, our vision is built around respect, intentional practice, and the belief that we grow together.', imageCaption: 'BRAZILIAN IN SPIRIT. CARIOX BY NATURE.' },

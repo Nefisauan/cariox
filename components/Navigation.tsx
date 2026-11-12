@@ -1,27 +1,31 @@
 'use client';
-import { TRIAL_CTA } from '../lib/trial/contract';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import { useAcademyContent } from './content/ContentProvider';
 import useModal from './useModal';
 
-const links = ['About', 'Programs', 'Instructors', 'Schedule', 'Gallery', 'Contact'];
 export function Wordmark() {
   const { branding } = useAcademyContent();
   return <BrandLogo src={branding.logoUrl} />;
 }
 function MobileMenu({ close, openTrial }: { close: () => void; openTrial: () => void }) {
   const ref = useModal();
+  const { navigation } = useAcademyContent();
+  const links = navigation.links.some(link => link.href === '#home')
+    ? navigation.links : [{ label: 'Home', href: '#home' }, ...navigation.links];
   return <dialog ref={ref} id="mobile-navigation" className="mobile-nav" aria-label="Site navigation" onCancel={close}>
     <div className="mobile-nav-top"><a href="#home" aria-label="CARIOX home" onClick={close}><Wordmark /></a><button className="icon-button" onClick={close} aria-label="Close navigation"><X /></button></div>
     <span className="eyebrow">FIND YOUR WAY FORWARD</span>
-    <nav aria-label="Mobile navigation">{['Home', ...links].map((label, index) => <a href={`#${label.toLowerCase()}`} key={label} onClick={close}><small>0{index + 1}</small>{label}<ArrowUpRight size={22} /></a>)}</nav>
-    <button className="button gold full" onClick={() => { close(); openTrial(); }}>{TRIAL_CTA} <ArrowUpRight size={18} /></button>
+    <nav aria-label="Mobile navigation">{links.map((link, index) => <a href={link.href} key={link.href} onClick={close}><small>0{index + 1}</small>{link.label}<ArrowUpRight size={22} /></a>)}</nav>
+    {navigation.buttonUrl
+      ? <a className="button gold full" href={navigation.buttonUrl} onClick={close}>{navigation.buttonText} <ArrowUpRight size={18} /></a>
+      : <button className="button gold full" onClick={() => { close(); openTrial(); }}>{navigation.buttonText} <ArrowUpRight size={18} /></button>}
     <p>BRAZILIAN ROOTS. ONE SHARED JOURNEY.</p>
   </dialog>;
 }
 export default function Navigation({ openTrial }: { openTrial: () => void }) {
+  const { navigation } = useAcademyContent();
   const [menu, setMenu] = useState(false);
   const [active, setActive] = useState('home');
   useEffect(() => {
@@ -33,10 +37,13 @@ export default function Navigation({ openTrial }: { openTrial: () => void }) {
     document.querySelectorAll('main section[id]').forEach(section => observer.observe(section));
     return () => observer.disconnect();
   }, []);
+  const buttonContent = <><span className="trial-nav-long">{navigation.buttonText}</span><span className="trial-nav-short">{navigation.buttonShortText}</span><ArrowUpRight size={16} /></>;
   return <>
     <header className="site-header"><a href="#home" className="logo" aria-label="CARIOX home"><Wordmark /></a>
-      <nav aria-label="Main navigation" className="nav">{links.map(label => <a href={`#${label.toLowerCase()}`} key={label} aria-current={active === label.toLowerCase() ? 'location' : undefined}>{label}</a>)}</nav>
-      <button className="header-cta" onClick={openTrial} aria-label={TRIAL_CTA}><span className="trial-nav-long">{TRIAL_CTA}</span><span className="trial-nav-short">Free Trial Class</span><ArrowUpRight size={16} /></button>
+      <nav aria-label="Main navigation" className="nav">{navigation.links.map(link => <a href={link.href} key={link.href} aria-current={link.href === `#${active}` ? 'location' : undefined}>{link.label}</a>)}</nav>
+      {navigation.buttonUrl
+        ? <a className="header-cta" href={navigation.buttonUrl} aria-label={navigation.buttonText}>{buttonContent}</a>
+        : <button className="header-cta" onClick={openTrial} aria-label={navigation.buttonText}>{buttonContent}</button>}
       <button className="menu-toggle icon-button" onClick={() => setMenu(true)} aria-label="Open navigation" aria-expanded={menu} aria-controls={menu ? 'mobile-navigation' : undefined}><Menu /></button>
       <div className="reading-progress" aria-hidden="true" />
     </header>

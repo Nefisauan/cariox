@@ -1,4 +1,5 @@
 import { defineQuery } from 'groq';
+import type { NavigationContent } from '../content/navigation';
 import type { HomepageContent, Branding, AcademyPhoto, AcademyProgram, Instructor, AcademySchedule, MembershipPrice, BusinessInformation, Announcement, AcademyFaq } from '../content/types';
 // Published perspective is also enforced by the client. No draft/preview token is exposed.
 export const ACADEMY_QUERY = defineQuery(`{
@@ -7,6 +8,7 @@ export const ACADEMY_QUERY = defineQuery(`{
     "bookingUrl":select(trialBooking.enabled == true => trialBooking.url),
     "bookingEmbedUrl":select(trialBooking.enabled == true => trialBooking.embedUrl)
   },
+  "navigation": *[_type == "navigation" && _id == "navigation"][0]{"links":links[]{label,href},buttonText,buttonShortText,buttonUrl},
   "branding": *[_type == "branding" && _id == "branding"][0]{wordmarkLeft,wordmarkRight,tagline,affiliation,"logoUrl":logo.asset->url},
   "photos": *[_type == "academyPhoto" && enabled == true] {key,title,label,description,alt,tab,"url":image.asset->url},
   "programs": *[_type == "program" && active == true && confirmed == true] | order(order asc) {title,tag,body},
@@ -22,6 +24,7 @@ export const ACADEMY_QUERY = defineQuery(`{
 type CmsPartial<T> = T extends (infer Item)[] ? CmsPartial<Item>[] : T extends object ? {[Key in keyof T]?: CmsPartial<T[Key]> | null} : T;
 export type AcademyQueryResult = {
   homepage?: CmsPartial<HomepageContent> | null; branding?: CmsPartial<Branding> | null;
+  navigation?: CmsPartial<NavigationContent> | null;
   photos?: CmsPartial<AcademyPhoto>[] | null; programs?: CmsPartial<AcademyProgram>[] | null;
   instructors?: CmsPartial<Instructor>[] | null; schedules?: CmsPartial<AcademySchedule>[] | null;
   prices?: CmsPartial<MembershipPrice>[] | null; business?: CmsPartial<BusinessInformation> | null;

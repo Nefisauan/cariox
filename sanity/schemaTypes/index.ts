@@ -7,4 +7,5 @@ import { membershipPrice } from './membershipPrice';
 import { businessInformation } from './businessInformation';
 import { announcement } from './announcement';
 import { faq } from './faq';
-export const schemaTypes = [homepage, branding, academyPhoto, program, classDefinition, instructor, schedule, membershipPrice, businessInformation, announcement, faq];
+import { navigation } from './navigation';
+export const schemaTypes = [homepage, navigation, branding, academyPhoto, program, classDefinition, instructor, schedule, membershipPrice, businessInformation, announcement, faq];

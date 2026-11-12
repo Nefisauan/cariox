@@ -290,6 +290,26 @@ test('mobile navigation labels its dialog and restores scroll state after select
   assert.ok(menu);
 });
 
+test('published navigation labels and destinations work in desktop and mobile menus', () => {
+  const content = resolveAcademyContent({ navigation: {
+    links: [{ label: 'Our academy', href: '#about' }],
+    buttonText: 'Book a visit', buttonShortText: 'Visit us', buttonUrl: '#schedule',
+  } });
+  const view = render(<AcademyContentProvider content={content}><Navigation openTrial={() => assert.fail('A configured link must navigate directly')} /></AcademyContentProvider>);
+  assert.equal(view.getByRole('link', { name: 'Our academy' }).getAttribute('href'), '#about');
+  assert.equal(view.getByRole('link', { name: 'Book a visit' }).getAttribute('href'), '#schedule');
+  assert.equal(view.container.querySelector('.trial-nav-short')?.textContent, 'Visit us');
+  const toggle = view.container.querySelector<HTMLButtonElement>('[aria-label="Open navigation"]')!;
+  toggle.style.display = 'inline-grid';
+  fireEvent.click(toggle);
+  const menu = view.getByRole('dialog', { name: 'Site navigation' });
+  assert.equal(menu.querySelector('a[href="#about"]')?.textContent?.includes('Our academy'), true);
+  const button = menu.querySelector('a.button');
+  assert.equal(button?.getAttribute('href'), '#schedule');
+  fireEvent.click(button!);
+  assert.equal(view.queryByRole('dialog', { name: 'Site navigation' }), null);
+});
+
 test('FAQs expand and collapse while keeping truthful answers accessible', () => {
   const view = render(<FirstVisit openTrial={() => {}} />);
   const question = view.getByRole('button', { name: 'How do I schedule a free trial?' });

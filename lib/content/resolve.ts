@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { fallbackContent } from './fallback';
 import { TRIAL_BOOKING_GUIDANCE } from '../trial/contract';
+import { navigationSchema } from './navigation';
 import { homepageSchema, brandingSchema, photoSchema, programSchema, instructorSchema, scheduleSchema, priceSchema, businessSchema, announcementSchema, faqSchema, type AcademyContent } from './types';
 
 const bookingFaqAnswers: Readonly<Record<string, string>> = {
@@ -34,6 +35,7 @@ export function resolveAcademyContent(input: unknown, now = new Date()): Academy
   return {
     ...fallbackContent, source: 'sanity', faqsConfirmed: faqs.length > 0,
     homepage,
+    navigation: mergeSection(fallbackContent.navigation, raw.navigation, navigationSchema),
     branding: mergeSection(fallbackContent.branding, raw.branding, brandingSchema),
     photos: fallbackContent.photos.map(photo => photos.find(item => item.key === photo.key) || photo),
     programs: programs.length ? programs : fallbackContent.programs, programsConfirmed: programs.length > 0 || fallbackContent.programsConfirmed,

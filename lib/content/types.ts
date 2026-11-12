@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { NavigationContent } from './navigation';
 const text = z.string().trim().min(1).max(5000);
 export const imageUrl = z.string().refine(value => /^\/images\/[a-zA-Z0-9_./-]+$/.test(value) && !value.includes('..') || /^https:\/\/cdn\.sanity\.io\/images\/[a-z0-9]+\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_.-]+(?:\?[^#]*)?$/.test(value), 'Use an uploaded Sanity image or a local /images/ asset');
 export const photoSchema = z.object({ key: z.enum(['academy', 'reception', 'performance', 'lounge', 'collection']), url: imageUrl, title: text, label: text, description: text, alt: text, tab: text });
@@ -42,4 +43,4 @@ export const businessSchema = z.object({ name: text, address: text.optional(), p
 export type BusinessInformation = z.infer<typeof businessSchema>;
 export const announcementSchema = z.object({ id: text, title: text, body: text, startsAt: z.iso.datetime().optional(), endsAt: z.iso.datetime().optional(), link: externalLink.optional() });
 export type Announcement = z.infer<typeof announcementSchema>;
-export type AcademyContent = { homepage: HomepageContent; branding: Branding; photos: AcademyPhoto[]; programs: AcademyProgram[]; instructors: Instructor[]; schedules: AcademySchedule[]; prices: MembershipPrice[]; business: BusinessInformation | null; announcements: Announcement[]; faqs: AcademyFaq[]; source: 'fallback' | 'sanity'; faqsConfirmed: boolean; programsConfirmed: boolean; scheduleConfirmed: boolean };
+export type AcademyContent = { homepage: HomepageContent; navigation: NavigationContent; branding: Branding; photos: AcademyPhoto[]; programs: AcademyProgram[]; instructors: Instructor[]; schedules: AcademySchedule[]; prices: MembershipPrice[]; business: BusinessInformation | null; announcements: Announcement[]; faqs: AcademyFaq[]; source: 'fallback' | 'sanity'; faqsConfirmed: boolean; programsConfirmed: boolean; scheduleConfirmed: boolean };
